@@ -9,7 +9,7 @@ import datetime
 import pickle
 
 #Storage
-all_exercises = {'bicep_curls': {'good': [], 'low range': [], 'high range': []}, 'lateral_raises': {'good': [], 'low range': [], 'high range': []}}
+all_exercises = {'bicep_curls': {'good': [], 'low range': []}, 'lateral_raises': {'good': [], 'low range': [], 'high range': []}}
 
 #Bag File Names
 bag_names = ['Tarun_testing.bag']
