@@ -202,20 +202,7 @@ class ExerciseController:
 
     def pose_callback(self, angle_message):
 
-        if len(self.angles) == 0 or len(self.peaks) == 0:
-            return
-
-        if not self.flag:
-            
-            if self.angles[-1].shape[0] > 10 and len(self.peaks[-1]) > 0 and self.peaks[-1][-1] + 20 < self.angles[-1].shape[0]:
-                #Add last point
-                self.peaks[-1].append(self.angles[-1].shape[0]-1)
-
-                #Evaluate rep
-                current_rep = self.angles[-1][self.peaks[-1][-2]:self.peaks[-1][-1],:]
-                rep_duration = (self.times[-1][self.peaks[-1][-2]] - self.times[-1][self.peaks[-1][-1]]).total_seconds()
-                # self.evaluate_rep(self.peaks[-1][-2], self.peaks[-1][-1], rep_duration)
-
+        if len(self.angles) == 0 or len(self.peaks) == 0 or not self.flag:
             return
 
         #Read angle from message
@@ -228,10 +215,10 @@ class ExerciseController:
         self.times[-1].append(time)
 
         #Look for new peaks
-        if self.angles[-1].shape[0] > 70 and self.angles[-1].shape[0] % 30 == 0:
+        if self.angles[-1].shape[0] > 70 and self.angles[-1].shape[0] % 15 == 0:
             
             #If far enough away from previous peak
-            if len(self.peaks[-1]) == 0 or (self.peaks[-1][-1] + 70 < self.angles[-1].shape[0]):
+            if len(self.peaks[-1]) == 0 or (self.peaks[-1][-1] + 40 < self.angles[-1].shape[0]):
 
                 to_check_amount = 25
 
@@ -259,7 +246,7 @@ class ExerciseController:
                         if len(self.peaks[-1]) > 0:
                             print('min in range', np.min(self.angles[-1][self.peaks[-1][-1]:peak_candidate,:][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']]))
 
-                        if len(self.peaks[-1]) == 0 or (self.peaks[-1][-1] + 60 < peak_candidate and np.min(self.angles[-1][self.peaks[-1][-1]:peak_candidate,:][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']]) < 100):
+                        if len(self.peaks[-1]) == 0 or (self.peaks[-1][-1] + 40 < peak_candidate and np.min(self.angles[-1][self.peaks[-1][-1]:peak_candidate,:][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']]) < 100):
                             
                             print('min at peak', np.min(self.angles[-1][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']][peak_candidate,:]))
                             
@@ -267,10 +254,9 @@ class ExerciseController:
                                 peak_to_add = peak_candidate
 
                 elif self.current_exercise == 'lateral_raises':
-                    if (current_angles_min > 40 or current_angles_max > 60) and max_grad > 2.3:
-
+                    if current_angles_max > 75 and max_grad > 6:
                         peak_candidate = self.angles[-1].shape[0]-to_check_amount+max_val_pos-1
-
+                        print('pre peak candidate', self.angles[-1].shape[0], to_check_amount, max_val_pos, peak_candidate)
                         peak_candidate = np.min([self.angles[-1].shape[0]-1, peak_candidate])
                         
                         print('peak candidate', peak_candidate)
