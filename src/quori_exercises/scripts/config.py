@@ -1,5 +1,6 @@
 import numpy as np
 import pickle
+import os
 
 ANGLE_INFO =  [('right_shoulder', ['right_hip', 'right_shoulder', 'right_elbow']),
            ('left_shoulder', ['left_hip', 'left_shoulder', 'left_elbow']),
@@ -43,7 +44,7 @@ for exercise in EXERCISE_INFO:
     for group, ind in EXERCISE_INFO[exercise]['segmenting_joints']:
         EXERCISE_INFO[exercise]['segmenting_joint_inds'].append(ANGLE_ORDER[group][ind])
 
-with open('src/quori_exercises/experts/new_experts.pickle', 'rb') as handle:
+with open('../quori_files/quori_ros/src/quori_exercises/experts/new_experts.pickle', 'rb') as handle:
     NEW_EXPERTS = pickle.load(handle)
 
 for exercise in NEW_EXPERTS:
