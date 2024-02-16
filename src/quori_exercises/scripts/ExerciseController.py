@@ -51,6 +51,7 @@ class ExerciseController:
         self.message_time_stamps = []
         self.eval_case_log = []
         self.speed_case_log = []
+        self.resampled_reps = []
 
         #Initialize logging
         self.logger = logging.getLogger('logging')
@@ -83,6 +84,7 @@ class ExerciseController:
         self.exercise_name_list.append(exercise_name)
         self.eval_case_log.append([])
         self.speed_case_log.append([])
+        self.resampled_reps.append([])
 
         #Raise arm all the way up
         self.move_right_arm('up', 'halfway')
@@ -200,6 +202,22 @@ class ExerciseController:
         
         return feedback
 
+    def evaluate_rep2(self, start, stop, rep_duration):
+        if self.current_exercise == 'bicep_curls':
+            to_test = self.angles[-1][start:stop, [8, 11]]
+            to_test_resampled = signal.resample(to_test, 95, axis=0)
+
+            x = np.arange(0,95)
+            test_1 = np.interp(30,x,to_test_resampled[:,0])
+            test_2 = np.interp(35,x,to_test_resampled[:,0])
+            test_3 = np.interp(25,x,to_test_resampled[:,1])
+            test_4 = np.interp(30,x,to_test_resampled[:,1])
+            print(test_1, test_2, test_3, test_4)
+
+            self.resampled_reps[-1].append(to_test_resampled)
+
+
+
     def pose_callback(self, angle_message):
 
         if len(self.angles) == 0 or len(self.peaks) == 0 or not self.flag:
@@ -232,42 +250,47 @@ class ExerciseController:
                 
                 max_grad = np.max(grad)
                 max_val_pos = np.argmax(self.angles[-1][-to_check_amount:,:][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']])
+                min_val_pos = np.argmin(self.angles[-1][-to_check_amount:,:][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']])
 
                 peak_to_add = None
-                print(self.angles[-1].shape[0]-to_check_amount+max_val_pos-1, 'angle max', current_angles_max, 'angle_min', current_angles_min, 'grad_max', max_grad)
+                # print(self.angles[-1].shape[0]-to_check_amount+max_val_pos-1, 'angle max', current_angles_max, 'angle_min', current_angles_min, 'grad_max', max_grad)
                 if self.current_exercise == 'bicep_curls':
-                    if current_angles_max > 150 and max_grad > 3:
+                    if current_angles_min < 30 and max_grad > 3:
 
-                        peak_candidate = self.angles[-1].shape[0]-to_check_amount+max_val_pos-1
+                        peak_candidate = self.angles[-1].shape[0]-to_check_amount+min_val_pos-1
 
                         peak_candidate = np.min([self.angles[-1].shape[0]-1, peak_candidate])
                         
-                        print('peak candidate', peak_candidate)
-                        if len(self.peaks[-1]) > 0:
-                            print('min in range', np.min(self.angles[-1][self.peaks[-1][-1]:peak_candidate,:][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']]))
+                        # print('peak candidate', peak_candidate)
+                        # if len(self.peaks[-1]) > 0:
+                            # print('min in range', np.min(self.angles[-1][self.peaks[-1][-1]:peak_candidate,:][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']]))
 
-                        if len(self.peaks[-1]) == 0 or (self.peaks[-1][-1] + 40 < peak_candidate and np.min(self.angles[-1][self.peaks[-1][-1]:peak_candidate,:][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']]) < 100):
+                        if len(self.peaks[-1]) == 0 or (self.peaks[-1][-1] + 40 < peak_candidate and np.max(self.angles[-1][self.peaks[-1][-1]:peak_candidate,:][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']]) > 130):
                             
-                            print('min at peak', np.min(self.angles[-1][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']][peak_candidate,:]))
+                            # print('min at peak', np.min(self.angles[-1][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']][peak_candidate,:]))
                             
-                            if np.min(self.angles[-1][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']][peak_candidate,:]) > 100:
+                            if np.min(self.angles[-1][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']][peak_candidate,:]) < 30:
                                 peak_to_add = peak_candidate
 
                 elif self.current_exercise == 'lateral_raises':
-                    if current_angles_max > 75 and max_grad > 6:
-                        peak_candidate = self.angles[-1].shape[0]-to_check_amount+max_val_pos-1
-                        print('pre peak candidate', self.angles[-1].shape[0], to_check_amount, max_val_pos, peak_candidate)
+                    if current_angles_min < 35 and max_grad > 3:
+                        peak_candidate = self.angles[-1].shape[0]-to_check_amount+min_val_pos-1
+                        # print('pre peak candidate', self.angles[-1].shape[0], to_check_amount, max_val_pos, peak_candidate)
                         peak_candidate = np.min([self.angles[-1].shape[0]-1, peak_candidate])
                         
-                        print('peak candidate', peak_candidate)
-                        if len(self.peaks[-1]) > 0:
-                            print('min in range', np.min(self.angles[-1][self.peaks[-1][-1]:peak_candidate,:][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']]))
+                        # print('peak candidate', peak_candidate)
+                        # if len(self.peaks[-1]) > 0:
+                            # print('min in range', np.min(self.angles[-1][self.peaks[-1][-1]:peak_candidate,:][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']]))
 
                         if len(self.peaks[-1]) == 0 or (self.peaks[-1][-1] + 40 < peak_candidate):
                             
-                            print('min at peak', np.min(self.angles[-1][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']][peak_candidate,:]))
-                            if np.min(self.angles[-1][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']][peak_candidate,:]) > 55:
-                                peak_to_add = peak_candidate
+                            # print('min at peak', np.min(self.angles[-1][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']][peak_candidate,:]))
+                            if len(self.peaks[-1]) == 0 or (self.peaks[-1][-1] + 40 < peak_candidate and np.max(self.angles[-1][self.peaks[-1][-1]:peak_candidate,:][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']]) > 80):
+                            
+                            # print('min at peak', np.min(self.angles[-1][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']][peak_candidate,:]))
+                            
+                                if np.max(self.angles[-1][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']][peak_candidate,:]) < 35:
+                                    peak_to_add = peak_candidate
 
                 if peak_to_add:
                     self.peaks[-1].append(peak_candidate)
@@ -283,22 +306,27 @@ class ExerciseController:
 
     def plot_angles(self):
         fig, ax = plt.subplots(4, 3)
-        fig2, ax2 = plt.subplots(4, 3)
+        fig2, ax2 = plt.subplots(1, 2)
         ii = 0
         for row in range(4):
             for col in range(3):
                 ax[row, col].plot(self.angles[-1][:,ii])
-                ax2[row, col].plot(np.gradient(self.angles[-1][:,ii]))
                 for peak_num, (beg, end) in enumerate(zip(self.peaks[-1][:-1], self.peaks[-1][1:])):
-                    ax[row, col].plot(beg, self.angles[-1][beg,ii], 'or', markersize=20)
-                    ax[row, col].plot(end, self.angles[-1][end,ii], 'or', markersize=20)
+                    ax[row, col].plot(beg, self.angles[-1][beg,ii], 'or', markersize=5)
+                    ax[row, col].plot(end, self.angles[-1][end,ii], 'or', markersize=5)
                     # if np.min(self.feedback[-1][peak_num]['evaluation']) > 0:
                     #     color = 'g'
                     # else:
                     #     color = 'r'
                     # ax[row, col].plot(np.arange(beg, end), self.angles[-1][beg:end,ii], color)
                 ii += 1
-        
+        for rep_ind, rep in enumerate(self.resampled_reps[-1]):
+            if rep_ind in [4, 5, 6]:
+                c = 'r'
+            else:
+                c = 'g'
+            ax2[0].plot(rep[:,0], color=c)
+            ax2[1].plot(rep[:,1], color=c)
         plt.show()
     
     def message(self, m, priority=2):
