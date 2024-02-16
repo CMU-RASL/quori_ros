@@ -8,4 +8,5 @@ logs
 .catkin_tools
 *.bag
 __pycache__/
+archive/*
 

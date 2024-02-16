@@ -4,7 +4,7 @@ from std_msgs.msg import Float64MultiArray
 import numpy as np
 
 neutral_emotion = [0, 0, 0, 0, 0, 0]
-happy_emotion = [1, 0, 0, 0, 0, 0]
+happy_emotion = [0.5, 0, 0, 0, 0, 0]
 sad_emotion = [0, 1, 0, 0, 0, 0]
 angry_emotion = [0, 0, 1, 0, 0, 0]
 disgust_emotion = [0, 0, 0, 1, 0, 0]
@@ -17,13 +17,13 @@ def talker():
     rate = rospy.Rate(0.1) # 10hz
 
 
-    for emotion in [happy_emotion, angry_emotion, fear_emotion, sad_emotion, happy_emotion]:
+    for emotion in [happy_emotion, happy_emotion, sad_emotion]:
 
         emotion_to_send = Float64MultiArray()
         emotion_to_send.data = emotion
         emotion_pub.publish(emotion_to_send)
         print('Sent', emotion)
-        rospy.sleep(15)
+        rospy.sleep(8)
 
 if __name__ == '__main__':
 
