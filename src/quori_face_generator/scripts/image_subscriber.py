@@ -43,7 +43,7 @@ def callback(data):
     sharpened_image = unsharp_mask(resized)
     gazebo_pub.publish(bridge.cv2_to_imgmsg(sharpened_image, "bgr8"))
 
-
+    unrotated_image = img
     robot_image = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
     robot_image = robot_image[150:-150, :, :]
 
@@ -71,7 +71,10 @@ def callback(data):
 
     cv2.namedWindow("face", cv2.WINDOW_NORMAL)
     cv2.setWindowProperty("face", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
-    cv2.imshow("face", robot_image)
+    cv2.imshow("face", unrotated_image)
+    cv2.namedWindow("rotated_face", cv2.WINDOW_NORMAL)
+    cv2.setWindowProperty("rotated_face", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+    cv2.imshow("rotated_face", robot_image)
     cv2.waitKey(10)
 
 

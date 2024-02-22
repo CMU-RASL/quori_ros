@@ -51,7 +51,6 @@ class PoseTracking:
         image = np.frombuffer(data.data, dtype=np.uint8).reshape(
             data.height, data.width, -1)
         results = self.pose_detector.process(image)
-
         if results.pose_landmarks:
             ct = datetime.now(tz)
 
