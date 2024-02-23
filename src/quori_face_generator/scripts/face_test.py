@@ -3,8 +3,8 @@ import rospy
 from std_msgs.msg import Float64MultiArray
 import numpy as np
 
-neutral_emotion = [0, 0, 0, 0, 0, 0]
-happy_emotion = [0.5, 0, 0, 0, 0, 0]
+neutral_emotion = [0.2, 0, 0, 0, 0, 0]
+happy_emotion = [1, 0, 0, 0, 0, 0]
 sad_emotion = [0, 1, 0, 0, 0, 0]
 angry_emotion = [0, 0, 1, 0, 0, 0]
 disgust_emotion = [0, 0, 0, 1, 0, 0]
@@ -17,7 +17,7 @@ def talker():
     rate = rospy.Rate(0.1) # 10hz
 
 
-    for emotion in [happy_emotion, happy_emotion, sad_emotion]:
+    for emotion in [sad_emotion, neutral_emotion, happy_emotion, neutral_emotion, sad_emotion, neutral_emotion]:
 
         emotion_to_send = Float64MultiArray()
         emotion_to_send.data = emotion

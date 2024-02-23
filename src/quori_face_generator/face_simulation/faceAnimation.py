@@ -66,7 +66,7 @@ class FaceAnimation(QWidget):
     #the emotion should be of the Emotion class
     def moveWidget(self, emotion, direction, speed, percentage):
         #modify the pulling percentages of each muscle pulling for emotion
-        print('movewidget', emotion.name)
+        # print('movewidget', emotion.name)
         emotion.modifyEmotionValuesByPercent(percentage)
         activeMuscles = emotion.emotionDict.keys()
         for faceFeatureIndex in range(len(self.points)):
@@ -158,11 +158,23 @@ class FaceAnimation(QWidget):
             return True
 
         if direction == -1:
-            targetPos = np.array(vector.p1).astype(float)
-            distanceTraveled = (((currPos[0] - vector.p2[0]) ** 2)+ ((currPos[1] - vector.p2[1]) ** 2))**0.5
+            # targetPos = np.array(vector.p2).astype(float)
+            # distanceTraveled = (((currPos[0] - vector.p2[0]) ** 2)+ ((currPos[1] - vector.p2[1]) ** 2))**0.5
             #print(distanceTraveled)
             #np.linalg.norm(np.array(vector.p2).astype(float) - currPos)
-            #print(f"Direction -1 - Distance Traveled: {distanceTraveled}, Vector Length: {vector.getVectorLength()}, point: {i}")
-            if np.all(np.abs(currPos - targetPos) <= threshold) or distanceTraveled >= vector.getVectorLength():
+            # print(f"Direction -1 - Distance Traveled: {distanceTraveled}, Vector Length: {vector.getVectorLength()}, point: {i}")
+            # print(distanceTraveled, vector.getVectorLength())
+
+
+            # curpos - p1 == p2 - p1
+            distanceTraveled = (((currPos[0] - vector.p1[0]) ** 2)+ ((currPos[1] - vector.p1[1]) ** 2))**0.5
+            targetDistance = (((vector.p2[0] - vector.p1[0]) ** 2)+ ((vector.p2[1] - vector.p1[1]) ** 2))**0.5
+
+            if distanceTraveled >= targetDistance:
+                return True
+            else:
                 return False
-            return True
+
+            # if np.all(np.abs(currPos - targetPos) <= threshold) or distanceTraveled <= vector.getVectorLength():
+            #     return False
+            # return True

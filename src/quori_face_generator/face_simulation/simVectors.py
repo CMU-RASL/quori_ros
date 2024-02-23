@@ -13,7 +13,7 @@ from vectors import Vector
 from faceAnimation import FaceAnimation
 from faceFeature import FaceFeature
 from emotions import Emotion
-from worker import Worker
+# from worker import Worker
 
 from std_msgs.msg import Float64MultiArray
 from sensor_msgs.msg import Image
@@ -81,8 +81,8 @@ class MainWindow(QMainWindow):
             "Levator Palpabrae":0.7, "Orbicularis Oris":1.0, "Depressor Anguli Oris":0.3, "Mentalis":0.3,
             "Jaw":1.0})
         
-        self.currEmotion = self.disgust
-        self.currPercentOfEmotion = 0.0
+        self.currEmotion = self.sadness
+        self.currPercentOfEmotion = 0.2
         self.currEmotion.modifyEmotionValuesByPercent(self.currPercentOfEmotion)
         self.isNeutral = True
 
@@ -112,25 +112,26 @@ class MainWindow(QMainWindow):
         #     self.askForUserInput()
         for w in self.widgets:
             
-            if self.timeElapsed >= self.numSecondsToHoldEmotion + self.timeToShowEmotion:
-                self.direction = -1
+            # if self.timeElapsed >= self.numSecondsToHoldEmotion + self.timeToShowEmotion:
+            #     self.direction = -1
             # if self.timeElapsed % 20 == 0:
                 # print(self.timeElapsed, 'target', self.numSecondsToHoldEmotion + self.timeToShowEmotion)
                 # print(self.currEmotion.name, self.direction, self.speed, self.currPercentOfEmotion)
+            # print(self.direction)
             w.moveWidget(self.currEmotion, self.direction, self.speed, self.currPercentOfEmotion)
         self.update()
         self.timeElapsed += 1
         # if not self.isNeutral:
         # print(self.timeElapsed)
         #set neutral back to true after enough time
-        if self.timeElapsed >= self.numSecondsToHoldEmotion + self.timeToShowEmotion*2:
+        if self.timeElapsed >= self.numSecondsToHoldEmotion + self.timeToShowEmotion:
             self.isNeutral = True
             self.timeElapsed = 0
             # # Add a small delay (you can adjust this value if needed)
             self.direction = 1
-            self.currPercentOfEmotion = 0.0
-            self.currEmotion = self.disgust
-            self.currEmotion.modifyEmotionValuesByPercent(self.currPercentOfEmotion)
+            # self.currPercentOfEmotion = 0.2
+            # self.currEmotion = self.joy
+            # self.currEmotion.modifyEmotionValuesByPercent(self.currPercentOfEmotion)
 
         # Capture and save the frame
         self.capture_frame()
@@ -178,24 +179,41 @@ class MainWindow(QMainWindow):
                 current_emotion = e
                 percentage = data.data[e_ind]
         
-        if len(current_emotion) > 0:
-            num_waits = 0
             
-            if not self.isNeutral and num_waits < 4:
-                rospy.sleep(1)
-                num_waits+=1
-            if num_waits >= 4:
-                return
-            
-            print('Heard {} emotion at {} level'.format(current_emotion, percentage))
-            emotions = {"joy": self.joy, "anger": self.anger, "fear": self.fear, "disgust":self.disgust, "surprise":self.surprise, "sadness": self.sadness}
+        print('Heard {} emotion at {} level'.format(current_emotion, percentage))
+        emotions = {"joy": self.joy, "anger": self.anger, "fear": self.fear, "disgust":self.disgust, "surprise":self.surprise, "sadness": self.sadness}
+
+        if not self.currEmotion.name == emotions[current_emotion].name:
+            self.direction = -1
+            self.currPercentOfEmotion = 0.00001
+            self.currEmotion.modifyEmotionValuesByPercent(self.currPercentOfEmotion)
+            self.isNeutral = False
+            self.timeElapsed = 0
+            print(self.direction, self.currEmotion.name, self.currPercentOfEmotion)
+            self.update()
+            rospy.sleep(1)
+
+            self.direction = 1
             self.currEmotion = emotions[current_emotion]
             self.currPercentOfEmotion = percentage
             self.currEmotion.modifyEmotionValuesByPercent(self.currPercentOfEmotion)
-            print(self.currEmotion.name, self.currPercentOfEmotion)
             self.isNeutral = False
             self.timeElapsed = 0
-            self.direction = 1
+            print(self.direction, self.currEmotion.name, self.currPercentOfEmotion)
+            self.update()
+
+        else:
+            if self.currPercentOfEmotion > percentage:
+                self.direction = -1
+            else:
+                self.direction = 1
+
+            self.currEmotion = emotions[current_emotion]
+            self.currPercentOfEmotion = percentage
+            self.currEmotion.modifyEmotionValuesByPercent(self.currPercentOfEmotion)
+            print(self.direction, self.currEmotion.name, self.currPercentOfEmotion)
+            self.isNeutral = False
+            self.timeElapsed = 0
             self.update()
 
 
