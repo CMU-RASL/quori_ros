@@ -101,23 +101,24 @@ class ExerciseController:
     def calc_dist_worker(self, ind, series1, series2, q):
         q.put((ind, fastdtw(series1, series2, dist=euclidean)))
 
-    def calc_dist(self, start, stop, indices, label):
-        input_values = NEW_EXPERTS[self.current_exercise][label]
+    def calc_dist(self, start, stop, indices, labels):
+        input_values = []
+        label_values = []
+        to_choose = 3
+        for label in labels:
+            experts_to_add = NEW_EXPERTS[self.current_exercise][label]
+            choose = np.random.choice(len(experts_to_add), np.min([len(experts_to_add), to_choose])).astype('int')
+            for ii in choose:
+                series2 = experts_to_add[ii][:, 1:]
+                series2 = series2[:, indices]
+                input_values.append(series2)
+            label_values.extend([label]*len(choose))
         
-        #Pick a random 5 input values
-        to_eval = np.random.choice(len(input_values), np.min([len(input_values), 5])).astype('int')
-
-        series1 = self.angles[-1][start:stop, indices]
-        new_input_values = []
-        for x in [input_values[ii] for ii in to_eval]:
-            series2 = x[:, 1:]
-            series2 = series2[:, indices]
-            new_input_values.append(series2)
-
         qout = multiprocessing.Queue()
 
+        series1 = self.angles[-1][start:stop, indices]
         processes = [multiprocessing.Process(target=self.calc_dist_worker, args=(ind, series1, val, qout))
-                for ind, val in enumerate(new_input_values)]
+                for ind, val in enumerate(input_values)]
         
         for p in processes:
             p.start()
@@ -128,7 +129,7 @@ class ExerciseController:
         unsorted_result = [qout.get() for p in processes]
         result = [t[1][0] for t in sorted(unsorted_result)]
 
-        return result
+        return result, label_values
 
     def evaluate_rep(self, start, stop, rep_duration):
 
@@ -142,26 +143,32 @@ class ExerciseController:
                 if ii in angles_to_include:
                     indices_to_include.append(indices[ii])
             
-            distances = []
-            labels = []
-            for label in ['good', 'low range', 'high range']:
-                if len(NEW_EXPERTS[self.current_exercise][label]) > 0:
-                    result = self.calc_dist(start, stop, indices_to_include, label)
-                    distances.extend(result)
-                    labels.extend([label]*len(result))
+            distances, labels = self.calc_dist(start, stop, indices_to_include, ['good', 'low range', 'high range'])
+            # print('Distances', np.round(distances), 'Labels', labels)
+
+            good_experts = distances[0:3]
+            good_distance = np.min(good_experts)
 
             closest_expert = np.argmin(distances)
             best_distance = distances[closest_expert]
             expert_label = labels[closest_expert]
 
-            if best_distance < EXERCISE_INFO[self.current_exercise]['threshold1']:
+            if (good_distance > best_distance and good_distance < EXERCISE_INFO[self.current_exercise]['threshold1']):
+                eval_list.append(1)
+                correction = 'good'
+
+            elif (best_distance < EXERCISE_INFO[self.current_exercise]['threshold1']):
                 if expert_label == 'good':
                     eval_list.append(1)
                 else:
                     eval_list.append(-1)
                 correction = expert_label
 
-            elif best_distance < EXERCISE_INFO[self.current_exercise]['threshold2']:
+            elif (good_distance > best_distance and good_distance < EXERCISE_INFO[self.current_exercise]['threshold2']):
+                eval_list.append(0)
+                correction = 'ok'
+
+            elif (best_distance < EXERCISE_INFO[self.current_exercise]['threshold2']):
                 if expert_label == 'good':
                     correction = 'ok'
                     eval_list.append(0)
@@ -190,7 +197,7 @@ class ExerciseController:
         self.performance[-1] = np.vstack((self.performance[-1], feedback['evaluation']))
         
         self.logger.info('Rep {}: Feedback {}'.format(len(self.feedback[-1]), feedback))
-        self.react(self.feedback[-1], self.current_exercise)
+        # self.react(self.feedback[-1], self.current_exercise)
         
         return feedback
 
@@ -256,6 +263,7 @@ class ExerciseController:
                         start = time.time()
                         self.evaluate_rep(self.peaks[-1][-2], self.peaks[-1][-1], rep_duration)
                         end = time.time()
+                        self.message('Rep')
                         print('Took {} seconds to evaluate'.format(end-start))
 
     def plot_angles(self):
@@ -267,7 +275,7 @@ class ExerciseController:
                 for peak_num, (beg, end) in enumerate(zip(self.peaks[-1][:-1], self.peaks[-1][1:])):
                     ax[row, col].plot(beg, self.angles[-1][beg,ii], 'ob', markersize=5)
                     ax[row, col].plot(end, self.angles[-1][end,ii], 'ob', markersize=5)
-                    if np.min(self.feedback[-1][peak_num]['evaluation']) > 0:
+                    if np.min(self.feedback[-1][peak_num]['evaluation']) >= 0:
                         color = 'g'
                     else:
                         color = 'r'
