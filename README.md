@@ -45,7 +45,7 @@ pip install mediapipe
 pip install fastdtw
 pip install scikit-learn
 pip install fer moviepy tensorflow
-pip install pygame, gtts
+pip install pygame gtts pyinput
 ```
 
 7. Build the workspace
