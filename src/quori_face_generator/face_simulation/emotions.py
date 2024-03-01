@@ -14,7 +14,7 @@ class Emotion():
     #when an emotion is showing less than 100% modify the percent values for it
     def modifyEmotionValuesByPercent(self, percent):
         # print('percent', percent)
-        print(self.name, percent)
+        # print(self.name, percent)
         printed = False
         for muscle in self.emotionDict.keys():
              currPercent = self.originalEmotionDict[muscle]
