@@ -16,6 +16,7 @@ MAX_LENGTH = 80
 MAX_REPS = 20
 REST_TIME = 40
 EXERCISE_LIST = ['bicep_curls']
+ROBOT_STYLE = 3
 
 #Change at beginning of study
 PARTICIPANT_ID = '1'
@@ -31,7 +32,7 @@ log_filename = '{}.log'.format(datetime.now().strftime("%Y-%m-%d--%H-%M-%S"))
 data_filename = '{}.npz'.format(datetime.now().strftime("%Y-%m-%d--%H-%M-%S"))
 
 #Initialize evaluation object
-controller = ExerciseController(False, log_filename)
+controller = ExerciseController(False, log_filename, ROBOT_STYLE)
 
 #For each exercise
 for set_num, exercise_name in enumerate(EXERCISE_LIST):

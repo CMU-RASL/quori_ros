@@ -1,6 +1,7 @@
 import numpy as np
 import pickle
 import os
+import json
 
 ANGLE_INFO =  [('right_shoulder', ['right_hip', 'right_shoulder', 'right_elbow']),
            ('left_shoulder', ['left_hip', 'left_shoulder', 'left_elbow']),
@@ -51,7 +52,7 @@ for exercise in EXERCISE_INFO:
         EXERCISE_INFO[exercise]['segmenting_joint_inds'].append(ANGLE_ORDER[group][ind])
 
 #/home/quori4/quori_files/quori_ros/ (Add that to the beginning to run on the robot, otherwise, stick with src/)
-with open('/home/quori4/quori_files/quori_ros/src/quori_exercises/experts/new_experts_smaller.pickle', 'rb') as handle:
+with open('src/quori_exercises/experts/new_experts_smaller.pickle', 'rb') as handle:
     NEW_EXPERTS = pickle.load(handle)
 
 for exercise in NEW_EXPERTS:
@@ -88,3 +89,10 @@ NONVERBAL_REACT = {
     'negative': {'torso': [-0.47*0.2, 0-0.47*0.25, -0.47*0.3, -0.47*0.35, -0.47*0.4],
                 'expression': [0.7, 0.55, 0.4, 0.25, 0.1]}
 }
+
+ALL_MESSAGES = {}
+for e in ['bicep curls', 'lateral raises']:
+    ALL_MESSAGES[e] = {}
+    for f in ['low', 'moderate', 'high']:
+        with open('src/quori_exercises/scripts/{}_{}.json'.format(e, f)) as file:
+            ALL_MESSAGES[e][f] = json.load(file)

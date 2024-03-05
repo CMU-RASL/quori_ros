@@ -15,11 +15,10 @@ from config import *
 import sys
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 import syllables
-from all_messages import *
 
 class ExerciseController:
 
-    def __init__(self, replay, log_filename):
+    def __init__(self, replay, log_filename, style):
 
         #Set initial parameters
         self.replay = replay
@@ -30,7 +29,7 @@ class ExerciseController:
         self.slope = 0.31077594
 
         #Robot style 0 - very firm, 1 - firm, 2 - neutral, 3 - encouraging, 4 - very encouraging
-        self.update_robot_style(3)
+        self.update_robot_style(style)
 
         #Initialize subscribers and publishers if running in real-time
         if not self.replay:
@@ -153,6 +152,8 @@ class ExerciseController:
             best_distance = distances[closest_expert]
             expert_label = labels[closest_expert]
 
+            self.logger.info('Group {} - Closest Good Expert {}, Closest Expert Distance {} and Label {}'.format(joint_group, np.round(good_distance), np.round(best_distance), expert_label))
+
             if (good_distance > best_distance and good_distance < EXERCISE_INFO[self.current_exercise]['threshold1']):
                 eval_list.append(1)
                 correction = 'good'
@@ -189,7 +190,7 @@ class ExerciseController:
         else:
             speed = 'good'
         
-        self.logger.info('Actual Duration {}, Average Expert Duration {}'.format(rep_duration, NEW_EXPERTS[self.current_exercise]['average duration']))
+        self.logger.info('Actual Duration {}, Average Expert Duration {}'.format(np.round(rep_duration, 1), np.round(NEW_EXPERTS[self.current_exercise]['average duration'], 1)))
 
         feedback = {'speed': speed, 'correction': corrections, 'evaluation': eval_list}
 
@@ -197,7 +198,7 @@ class ExerciseController:
         self.performance[-1] = np.vstack((self.performance[-1], feedback['evaluation']))
         
         self.logger.info('Rep {}: Feedback {}'.format(len(self.feedback[-1]), feedback))
-        # self.react(self.feedback[-1], self.current_exercise)
+        self.react(self.feedback[-1], self.current_exercise)
         
         return feedback
 
@@ -263,24 +264,27 @@ class ExerciseController:
                         start = time.time()
                         self.evaluate_rep(self.peaks[-1][-2], self.peaks[-1][-1], rep_duration)
                         end = time.time()
-                        self.message('Rep')
-                        print('Took {} seconds to evaluate'.format(end-start))
+                        self.logger.info('Evaluation took {} seconds'.format(np.round(end-start, 1)))
 
     def plot_angles(self):
-        fig, ax = plt.subplots(4, 3)
-        ii = 0
-        for row in range(4):
-            for col in range(3):
-                ax[row, col].plot(self.angles[-1][:,ii], 'k')
-                for peak_num, (beg, end) in enumerate(zip(self.peaks[-1][:-1], self.peaks[-1][1:])):
-                    ax[row, col].plot(beg, self.angles[-1][beg,ii], 'ob', markersize=5)
-                    ax[row, col].plot(end, self.angles[-1][end,ii], 'ob', markersize=5)
-                    if np.min(self.feedback[-1][peak_num]['evaluation']) >= 0:
-                        color = 'g'
-                    else:
-                        color = 'r'
-                    ax[row, col].plot(np.arange(beg, end), self.angles[-1][beg:end,ii], color)
-                ii += 1
+        order = ['xy', 'yz', 'xz']
+        for set_num in range(len(self.angles)):
+            fig, ax = plt.subplots(4, 3)
+            ii = 0
+            for row in range(4):
+                for col in range(3):
+                    ax[row, col].plot(self.angles[set_num][:,ii], 'k')
+                    for peak_num, (beg, end) in enumerate(zip(self.peaks[set_num][:-1], self.peaks[set_num][1:])):
+                        ax[row, col].plot(beg, self.angles[set_num][beg,ii], 'ob', markersize=5)
+                        ax[row, col].plot(end, self.angles[set_num][end,ii], 'ob', markersize=5)
+                        if np.min(self.feedback[set_num][peak_num]['evaluation']) >= 0:
+                            color = 'g'
+                        else:
+                            color = 'r'
+                        ax[row, col].plot(np.arange(beg, end), self.angles[set_num][beg:end,ii], color)
+                    ax[row, col].set_title('{}-{}'.format(ANGLE_INFO[row][0], order[col]))
+                    ii += 1
+            fig.suptitle('Set {} out of {}'.format(set_num+1, len(self.angles)))
         plt.show()
     
     def message(self, m, priority=2):
@@ -498,16 +502,16 @@ class ExerciseController:
         return c
 
     def get_message(self, c):
-        
+        styles = ['very firm', 'firm', 'neutral', 'encouraging', 'very encouraging']
         m = []
         message_to_case = []
         for ci in c:
 
-            #Temporary until LLM updates!
-            if self.robot_style in [0, 1, 2]:
-                m_to_add = ALL_MESSAGES[self.current_exercise][ci][2]
-            elif self.robot_style in [3, 4]:
-                m_to_add = ALL_MESSAGES[self.current_exercise][ci][3]
+            key1 = self.current_exercise.replace('_', ' ')
+            key2 = 'low'
+            key3 = ci
+            key4 = styles[self.robot_style]
+            m_to_add = ALL_MESSAGES[key1][key2][key3][key4]
 
             m.extend(m_to_add)
             message_to_case.extend([ci]*len(m_to_add))
@@ -668,7 +672,7 @@ class ExerciseController:
             chosen_case = speed_chosen_case
             self.message(speed_message, priority=1)
         
-        #If feedback case, want to match the reaction, otherwise go for the last feedback
+        #If feedback case, want to match the reaction, otherwise react based on cadence
         if speed_message == '' and eval_message == '':
             self.nonverbal_case(feedback, '')
         else:
