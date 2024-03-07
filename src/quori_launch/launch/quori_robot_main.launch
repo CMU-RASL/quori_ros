@@ -4,8 +4,8 @@
           <arg name="hardware" value="$(arg hardware)" />
      </include>
 
-     <include file="$(find
-     quori_face_generator)/launch/websocket.launch" />
+     <node pkg="quori_face_generator"
+          name="quori_face" type="simVectors.py" output="screen" />
      
      <node pkg="quori_controller"
           name="quori_sound" type="quori_sound.py" output="screen" />

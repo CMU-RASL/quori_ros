@@ -165,10 +165,10 @@ class MainWindow(QMainWindow):
                 value=[255,255,255]
             )
         
-        # cv2.namedWindow("face", cv2.WINDOW_NORMAL)
-        # cv2.setWindowProperty("face", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
-        # cv2.imshow("face", robot_image)
-        # cv2.waitKey(10)
+        cv2.namedWindow("face", cv2.WINDOW_NORMAL)
+        cv2.setWindowProperty("face", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+        cv2.imshow("face", robot_image)
+        cv2.waitKey(10)
     
     def emotionCallback(self, data):
         print('Heard', data.data)
@@ -185,7 +185,7 @@ class MainWindow(QMainWindow):
 
         if not self.currEmotion.name == emotions[current_emotion].name:
             self.direction = -1
-            self.currPercentOfEmotion = 0.00001
+            self.currPercentOfEmotion = 0.01
             self.currEmotion.modifyEmotionValuesByPercent(self.currPercentOfEmotion)
             self.isNeutral = False
             self.timeElapsed = 0
