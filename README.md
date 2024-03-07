@@ -4,7 +4,7 @@ This catkin workspace contains all of the ROS packages necessary for full operat
 
 ## Prerequisites
 
-The package is compatible with **Ubuntu 16.04 / ROS Kinetic** and **Ubuntu 20.04 / ROS Noetic**, built with the **Catkin** system. Make sure you have the right environment configured. This documentation assumes you are using noetic, so replace it with kinetic if needed.
+The package is compatible with **Ubuntu 20.04 / ROS Noetic**, built with the **Catkin** system. Make sure you have the right environment configured. This documentation assumes you are using noetic, so replace it with kinetic if needed.
 
 ## Initial Setup
 
@@ -34,18 +34,12 @@ git submodule init
 ```
 sudo apt-get install ros-noetic-sound-play ros-noetic-rgbd-launch ros-noetic-libuvc-camera ros-noetic-libuvc-ros
 sudo apt-get install ros-noetic-ros-control ros-noetic-ros-controllers ros-noetic-gazebo-ros-control
-sudo apt-get install python3-catkin-tools ros-noetic-smach-ros ros-noetic-smach-viewer
-sudo apt-get install python3-pip
-sudo apt-get install libglfw3 libglfw3-dev
-sudo apt-get install ros-noetic-rqt-joint-trajectory-controller
-sudo apt-get install python3-catkin-tools
+sudo apt-get install python3-catkin-tools ros-noetic-rqt-joint-trajectory-controller python3-catkin-tools
+sudo apt-get install python3-pip libglfw3 libglfw3-dev
 rosdep update
 rosdep install --from-paths src --ignore-src -r -y
-pip install mediapipe
-pip install fastdtw
-pip install scikit-learn
-pip install fer moviepy tensorflow
-pip install pygame, gtts
+pip install mediapipe fastdtw scikit-learn fer moviepy tensorflow
+pip install pygame gtts pyinput
 ```
 
 7. Build the workspace
@@ -54,51 +48,52 @@ catkin config --init
 catkin build
 source devel/setup.bash
 ```
+## Set-up sound
+Go to Settings in Ubuntu and make sure the output is set to Headphones and the volume is all the way up
 
-## Each new terminal
+
+## Running on the robot + second computer
 ```
 cd quori_files/quori_ros
 export ROS_IP=$(hostname -I | awk '{print $1;}')
-export ROS_MASTER_URI=http://quori.wifi.local.cmu.edu:11311
+export ROS_MASTER_URI=http://quori.wifi.local.cmu.edu:11311 
 export ROS_HOSTNAME=$ROS_IP
 source devel/setup.bash
 ```
 
-## Set-up sound
-Go to Settings in Ubuntu and make sure the output is set to Headphones and the volume is all the way up
-
+## Running only on one machine
+```
+cd quori_files/quori_ros
+export ROS_IP=localhost
+export ROS_MASTER_URI=http://localhost:11311/ 
+export ROS_HOSTNAME=$ROS_IP
+source devel/setup.bash
+```
 
 ## Exercise Session setup
 
 ### Robot
 - Terminal 1 `roslaunch quori_launch quori_robot_main.launch`
-- Terminal 2 
+- Terminal 2 (to record the video) `rosbag record astra_ros/devices/default/color/image_color`
+
+### Second Computer
+- Terminal 1 (to check the camera frame) `rosrun image_view image_view image:=/astra_ros/devices/default/color/image_color`
+- Terminal 2 `rosrun quori_exercises study_session.py`
+
+## General Troubleshooting
+
+## Fix the Wifi on new laptop
 ```
-cd src/quori_face_generator/gui
-python3 -m http.server 8000
+sudo apt update
+sudo apt install git build-essential
+git clone https://git.kernel.org/pub/scm/linux/kernel/git/iwlwifi/backport-iwlwifi.git
+cd backport-iwlwifi/
+make defconfig-iwlwifi-public
+sed -i 's/CPTCFG_IWLMVM_VENDOR_CMDS=y/# CPTCFG_IWLMVM_VENDOR_CMDS is not set/' .config
+make -j4
+sudo make install
+sudo modprobe iwlwifi
 ```
-- Terminal 3 `rosbag record astra_ros/devices/default/color/image_color`
-- Open a browser at `http://localhost:8000/face_generator.html`
 
-
-### Brando
-- Terminal 1 `rosrun quori_exercises exercise_session.py`
-- Terminal 2 `rosrun image_view image_view image:=/astra_ros/devices/default/color/image_color`
-
-## Run Robot/Simulation
-
-- Terminal 1: `roslaunch quori_launch quori_robot_main.launch` (make sure you set the hardware tag in this file to true or false depending on whether you want to run the simulation or the robot)
-- If you want to test the controllers:
-    - Terminal 2: `rosrun rqt_joint_trajectory_controller rqt_joint_trajectory_controller`
-- Terminal 3: `cd src/quori_face_generator/gui && python3 -m http.server 8000` 
-    - Open a browser at `http://localhost:8000/face_generator.html`
-
-## Turn on the Robot
-
-1. Flip the breaker
-2. Make sure the inverter has the switch turned to |
-3. Press the power button to turn PC power on
-
-
-
-
+### Fix the Astra Issue
+`export ASTRA_ROOT=/opt/AstraSDK-v2.1.1-24f74b8b15-20200426T014025Z-Ubuntu18.04-x86_64`

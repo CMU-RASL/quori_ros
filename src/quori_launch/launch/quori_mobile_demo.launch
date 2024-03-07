@@ -1,0 +1,12 @@
+<launch>
+    <remap from="/usb_cam/image_raw" to="/astra_ros/devices/default/color/image_color" />
+    <node pkg="usb_cam" name="usb_cam" type="usb_cam_node">
+        <param name="video_device" type="string" value="/dev/video1" />
+    </node>
+    
+    <include file="$(find quori_face_generator)/launch/websocket.launch" />
+     
+     <node pkg="quori_controller" name="quori_sound" type="quori_sound.py" output="screen" />
+    
+    <node pkg="quori_exercises" name="pose_tracking" type="pose_tracking.py" output="screen" />
+</launch>
