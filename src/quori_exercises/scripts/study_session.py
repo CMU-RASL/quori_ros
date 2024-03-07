@@ -11,9 +11,9 @@ import logging
 import time
 
 #Parameters
-MIN_LENGTH = 60
-MAX_LENGTH = 80
-MAX_REPS = 20
+MIN_LENGTH = 15
+MAX_LENGTH = 30
+MAX_REPS = 10
 REST_TIME = 40
 EXERCISE_LIST = ['bicep_curls']
 ROBOT_STYLE = 3

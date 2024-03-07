@@ -216,12 +216,12 @@ class ExerciseController:
         self.times[-1].append(current_time)
 
         #Look for new peaks
-        if self.angles[-1].shape[0] > 70 and self.angles[-1].shape[0] % 15:
-            
+        if self.angles[-1].shape[0] > 30 and self.angles[-1].shape[0] % 5:
+            # print('Condition 1', self.angles[-1].shape[0])
             #If far enough away from previous peak
-            if len(self.peaks[-1]) == 0 or (self.peaks[-1][-1] + 40 < self.angles[-1].shape[0]):
-
-                to_check_amount = 25
+            if len(self.peaks[-1]) == 0 or (self.peaks[-1][-1] + 20 < self.angles[-1].shape[0]):
+                # print('Condition 2', self.angles[-1].shape[0])
+                to_check_amount = 15
 
                 #Calculate maxes and mins
                 current_angles_min = np.min(self.angles[-1][-to_check_amount:,:][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']])
@@ -242,18 +242,21 @@ class ExerciseController:
                     peak_candidate = self.angles[-1].shape[0]-to_check_amount+min_val_pos-1
 
                     peak_candidate = np.min([self.angles[-1].shape[0]-1, peak_candidate])
+                    # print('Condition 3', peak_candidate, self.angles[-1].shape[0])
 
-                    if len(self.peaks[-1]) == 0 or (self.peaks[-1][-1] + 40 < peak_candidate and np.max(self.angles[-1][self.peaks[-1][-1]:peak_candidate,:][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']]) > EXERCISE_INFO[self.current_exercise]['max_in_range']):
-
+                    if len(self.peaks[-1]) == 0 or (self.peaks[-1][-1] + 20 < peak_candidate and np.max(self.angles[-1][self.peaks[-1][-1]:peak_candidate,:][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']]) > EXERCISE_INFO[self.current_exercise]['max_in_range']):
+                        
+                        # print('Condition 4', peak_candidate, self.angles[-1].shape[0])
                         if self.current_exercise == 'bicep_curls':
-                            if np.min(self.angles[-1][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']][peak_candidate,:]) < 25:
+                            if np.min(self.angles[-1][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']][peak_candidate,:]) < 40:
                                 peak_to_add = peak_candidate
                         
                         if self.current_exercise == 'lateral_raises':
-                            if np.max(self.angles[-1][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']][peak_candidate,:]) < 30:
+                            if np.max(self.angles[-1][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']][peak_candidate,:]) < 40:
                                 peak_to_add = peak_candidate
 
                 if peak_to_add:
+
                     self.peaks[-1].append(peak_candidate)
                             
                     self.logger.info('---Peak detected - {}'.format(self.peaks[-1][-1]))
@@ -269,7 +272,7 @@ class ExerciseController:
     def plot_angles(self):
         order = ['xy', 'yz', 'xz']
         for set_num in range(len(self.angles)):
-            fig, ax = plt.subplots(4, 3)
+            fig, ax = plt.subplots(4, 3, sharex=True, sharey=True)
             ii = 0
             for row in range(4):
                 for col in range(3):
@@ -277,14 +280,16 @@ class ExerciseController:
                     for peak_num, (beg, end) in enumerate(zip(self.peaks[set_num][:-1], self.peaks[set_num][1:])):
                         ax[row, col].plot(beg, self.angles[set_num][beg,ii], 'ob', markersize=5)
                         ax[row, col].plot(end, self.angles[set_num][end,ii], 'ob', markersize=5)
-                        if np.min(self.feedback[set_num][peak_num]['evaluation']) >= 0:
-                            color = 'g'
-                        else:
-                            color = 'r'
-                        ax[row, col].plot(np.arange(beg, end), self.angles[set_num][beg:end,ii], color)
+                        if len(self.feedback[set_num]) > 0:
+                            if np.min(self.feedback[set_num][peak_num]['evaluation']) >= 0:
+                                color = 'g'
+                            else:
+                                color = 'r'
+                            ax[row, col].plot(np.arange(beg, end), self.angles[set_num][beg:end,ii], color)
                     ax[row, col].set_title('{}-{}'.format(ANGLE_INFO[row][0], order[col]))
                     ii += 1
             fig.suptitle('Set {} out of {}'.format(set_num+1, len(self.angles)))
+            fig.tight_layout(pad=2.0)
         plt.show()
     
     def message(self, m, priority=2):
