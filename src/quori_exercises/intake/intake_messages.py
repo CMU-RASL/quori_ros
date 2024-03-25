@@ -20,18 +20,16 @@ INTAKE_MESSAGES = {
 
     'Consent':{
         'Start consent form':
-            ['Before we begin I need to ask you some basic information and go over the consent form in front of you.  '],
+            ['Before we begin I need to ask you some basic information and go over the consent form in front of you.'],
 
         
         
         'Part 1':
             ['The first part goes over the purpose procedure risks and your compensation for participating in the study. Please take a minute to read\
-                through the form. Let me know if you have any questions.'],
+                through the form.'],
         
         'Part 2':
-            ['The second part goes over the optional permission to use the audio and video recordings taken during this study or illustrative reasons in presentations of this work online\
-              in print for scientific or educational purposes or as part of a publicly available database.\
-              Please take a minute to read through the form. Let me know if you have any questions or if you are done.'],
+            ['The second part goes over if you can give us permission to use the audio and video recordings taken during this study for research communication. There are three levels of permission. Please read through and choose one. Let me know when you are done.'],
       
         'Part 3':
             ['Please read the block below the current one and sign the consent form. Once you are done pleae let me know. My assistant will be here to help you.'],
@@ -46,8 +44,8 @@ INTAKE_MESSAGES = {
        
        'Explanation':
             ['As a recap  you will be completing a series of exercises and I will be evaluating you on your performance. \
-             As a I will be recording your video and audio during the session. I will also be asking you questions about your experience. \
-             I will be using this information to improve my coaching skills. Do you have any questions?'],
+             I will be recording your video and audio during the session. I will also be asking you questions about your experience. \
+             I will be using this information to improve my coaching skills. If you have any questions my assistant can answer them for you.'],
 
         'Time':
             ['Let me know if you are done or need more time.']
@@ -67,22 +65,24 @@ INTAKE_MESSAGES = {
     'Exercise explanation': {
         'Start explanation':
             ['You will be doing two types of exercises today. One is lateral raises and the other is bicep curls. Please look at the tablet in front of you.\
-             The first exeercise shown are the bicep curls and the second shown in the lateral raises' ],
+             The first exercise shown are the bicep curls and the second shown in the lateral raises.' ],
              
         'Explain exercise routine':
-            ['You will perform three rounds with 4 sets each. In each round two of the sets will be bicep curls and two of the sets will be lateral raises.\
-             In between each set there will be a rest period. After each set the robot will ask you to rate how difficult that set was from 1 to 10.\
-             Please take a look at the sheet next to you that explains what each rating means.\
-             Do you have any questions so far?'],
+            ['You will perform two rounds with 4 sets each. In each round the first two sets will be bicep curls and the second two will be lateral raises.\
+             In between each set there will be a rest period.'
+             ],
         
         'Dumbbells':
             ['We have some dumbbells here for you to use if you are comfortable.\
              You can feel free to use them to perform the exercises but if at any point the weight becomes too much\
             you can feel free to drop them in between sets and just use bodyweight.']
+        
+        #add part about questions they might have 
     
     },
 
     'Coach type':{
+        #edit!!
         'Ask type':
             ['I have two different types of coaching styles I can be depending on what you prefer. Type 1 is more firm with less encouragement and Type 2 is less firm with more encouragement. Which type would you prefer: Type 1 or Type 2?']
 
@@ -90,7 +90,7 @@ INTAKE_MESSAGES = {
 
     'Start exercise':{
         'Start':
-            ['Thank you for your responses. Let us begin the exercise.']
+            ['Thank you for your responses. If you want to use any dumbbells please pick up the ones that you want. Let us begin the exercise. ']
     },
 
     'Fall back': {

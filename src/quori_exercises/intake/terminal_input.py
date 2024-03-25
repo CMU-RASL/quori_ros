@@ -9,15 +9,16 @@ from intake_messages import *
 
 def get_key():
     try:
-        section_num_input=input("What section are you on? \n 1. Introduction \n 2.Consent \
-                    \n 3. Evaluation \n 4. Exercise explanation  \n 5. Coach Type \n 6. Fall Back \n ")
+        section_num_input=input("What section are you on? \n 1. Introduction \n 2. Consent \
+                    \n 3. Evaluation \n 4. Exercise explanation  \n 5. Coach Type  \n 6. Start \n 7. Fall Back \n ")
         
         if section_num_input == "1": key="Introduction"
         elif section_num_input == "2": key= "Consent"
         elif section_num_input == "3": key= "Evaluation"
         elif section_num_input == "4": key="Exercise explanation"
         elif section_num_input == "5": key= "Coach type"
-        elif section_num_input == "6": key= "Fall back"
+        elif section_num_input == "6": key= "Start exercises"
+        elif section_num_input == "7": key= "Fall back"
        #elif section_num_input == "7": key= "quit"
         return key
         

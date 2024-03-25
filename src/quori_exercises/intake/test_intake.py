@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 import matplotlib.pyplot as plt
 from datetime import datetime
-from quori_ros.src.quori_exercises.intake.intake_messages import *
+from intake_messages import *
 import logging
-import quori_ros.src.quori_exercises.intake.terminal_input as ti
+import terminal_input as ti
 import os
 from pynput import keyboard
 import rospy
@@ -45,7 +45,7 @@ sound_pub = rospy.Publisher("quori_sound", String, queue_size=10)
 
 
 
-folder_path = '/home/quori4/quori_files/quori_ros/src/quori_exercises/intake_logs/' 
+folder_path = 'src/quori_exercises/intake_logs/' 
 if not os.path.exists(folder_path): 
     os.makedirs(folder_path) 
 
