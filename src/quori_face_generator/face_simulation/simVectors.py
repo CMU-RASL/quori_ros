@@ -81,8 +81,8 @@ class MainWindow(QMainWindow):
             "Levator Palpabrae":0.7, "Orbicularis Oris":1.0, "Depressor Anguli Oris":0.3, "Mentalis":0.3,
             "Jaw":1.0})
         
-        self.currEmotion = self.sadness
-        self.currPercentOfEmotion = 0.2
+        self.currEmotion = self.joy
+        self.currPercentOfEmotion = 0.5
         self.currEmotion.modifyEmotionValuesByPercent(self.currPercentOfEmotion)
         self.isNeutral = True
 
