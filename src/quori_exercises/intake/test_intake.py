@@ -9,6 +9,9 @@ from pynput import keyboard
 import rospy
 from std_msgs.msg import String
 
+#Change at the beginning of each session
+PARTICIPANT_ID = '1'
+
 def on_press(key):
     try:
         logger2.info(f'Key {key.char} pressed')
@@ -40,8 +43,7 @@ rospy.init_node('intake_session', anonymous=True)
 
 sound_pub = rospy.Publisher("quori_sound", String, queue_size=10)
 
-#Change at the beginning of each session
-PARTICIPANT_ID = '1'
+
 
 folder_path = '/home/quori4/quori_files/quori_ros/src/quori_exercises/intake_logs/' 
 if not os.path.exists(folder_path): 

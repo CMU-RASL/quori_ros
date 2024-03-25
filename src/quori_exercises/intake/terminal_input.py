@@ -1,6 +1,6 @@
 #Current iteration of the terminal inputs
 #This is a script that allows the user to input the key and key_specific to get the corresponding message from the intake_messages.py file
-from quori_ros.src.quori_exercises.intake.intake_messages import *
+from intake_messages import *
 
 #back=False
 
@@ -42,12 +42,17 @@ def get_key_intro():
     
 
 def get_key_consent():
-    response_num=input("1. Name \n 2. Age \n 3. Explanation \n 4. back \n")
+    response_num=input("1.Start consent form \n 2. Part 1 \n 3. Part 2 \n 4. Part 3 \n 5. Part 4 \n 6. Part 5 \n 7. Explanation \n 8. Time \n 9. back \n")
     try:
-        if response_num == "1": key_specific="Name"
-        elif response_num== "2": key_specific="Age"
-        elif response_num == "3": key_specific="Explanation"
-        elif response_num == "4": key_specific="back"
+        if response_num == "1": key_specific="Start consent form"
+        elif response_num== "2": key_specific="Part 1"
+        elif response_num == "3": key_specific="Part 2"
+        elif response_num == "4": key_specific="Part 3"
+        elif response_num == "5": key_specific="Part 4"
+        elif response_num == "6": key_specific="Part 5"
+        elif response_num == "7": key_specific="Explanation"
+        elif response_num == "8": key_specific="Time"
+        elif response_num == "9": key_specific="back"
         return key_specific
     except:
         print("Invalid input")
@@ -89,8 +94,17 @@ def get_key_coach_type():
     except:
         print("Invalid input")
         return get_key_coach_type()
-    
 
+def get_key_start_exercise():
+    response_num=input("1. Start \n 2. back \n")
+    try:
+        if response_num == "1": key_specific="Start"
+        elif response_num== "2": key_specific="back"
+        return key_specific
+    except:
+        print("Invalid input")
+        return get_key_start_exercise()
+     
 def get_key_fall_back():
     response_num=input("1. No answer \n 2. Repeat \n 3. Clarify \n  4. back \n")
     try:
@@ -118,6 +132,8 @@ def get_terminal_input(key):
         key_specific=get_key_exercise()
     elif key == "Coach type":
         key_specific=get_key_coach_type()
+    elif key == "Start exercise":
+        key_specific=get_key_start_exercise()
     elif key == "Fall back":
         key_specific=get_key_fall_back()
     # if key_specific == "back":
