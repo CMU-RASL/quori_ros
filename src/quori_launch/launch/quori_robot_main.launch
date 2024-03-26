@@ -10,6 +10,8 @@
      <node pkg="quori_controller"
           name="quori_sound" type="quori_sound.py" output="screen" />
 
+     <node pkg="ros_bluetooth" name="ros_bluetooth" type="ros_bluetooth.py" output="screen" />
+
      <include file="$(find astra_ros)/launch/default.launch" /> 
 
      <node pkg="quori_exercises" name="pose_tracking" type="pose_tracking.py" output="screen" />

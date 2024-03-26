@@ -20,6 +20,10 @@ ROBOT_STYLE = 3
 
 #Change at beginning of study
 PARTICIPANT_ID = '1'
+RESTING_HR = 70
+AGE = 70
+MAX_HR = 220-AGE
+
 VERBAL_CADENCE = 2 #1 is low, 2 is medium, 3 is high
 NONVERBAL_CADENCE = 2
 
@@ -32,7 +36,7 @@ log_filename = '{}.log'.format(datetime.now().strftime("%Y-%m-%d--%H-%M-%S"))
 data_filename = '{}.npz'.format(datetime.now().strftime("%Y-%m-%d--%H-%M-%S"))
 
 #Initialize evaluation object
-controller = ExerciseController(False, log_filename, ROBOT_STYLE)
+controller = ExerciseController(False, log_filename, ROBOT_STYLE, RESTING_HR, MAX_HR)
 
 #For each exercise
 for set_num, exercise_name in enumerate(EXERCISE_LIST):
@@ -98,7 +102,10 @@ for set_num, exercise_name in enumerate(EXERCISE_LIST):
                             peaks=controller.peaks,
                             feedback=controller.feedback,
                             times=controller.times,
-                            exercise_names=controller.exercise_name_list
+                            exercise_names=controller.exercise_name_list,
+                            all_hr = controller.all_heart_rates,
+                            heart_rates = controller.heart_rates,
+                            hrr = controller.hrr
                         )
     controller.logger.info('Saved file {}'.format(data_filename))
 

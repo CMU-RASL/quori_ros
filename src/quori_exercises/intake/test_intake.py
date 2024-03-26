@@ -7,7 +7,8 @@ import terminal_input as ti
 import os
 from pynput import keyboard
 import rospy
-from std_msgs.msg import String
+from std_msgs.msg import String, Int32
+import numpy as np
 
 #Change at the beginning of each session
 PARTICIPANT_ID = '1'
@@ -39,10 +40,16 @@ def get_message():
 
     return INTAKE_MESSAGES[key][key_specific]
 
+def heart_rate_callback(data):
+    heart_rates.append(data.data)
+
+
 rospy.init_node('intake_session', anonymous=True)
 
 sound_pub = rospy.Publisher("quori_sound", String, queue_size=10)
 
+heart_rate_sub = rospy.Subscriber("/heart_rate", Int32, heart_rate_callback, queue_size=3000)
+heart_rates = []
 
 
 folder_path = 'src/quori_exercises/intake_logs/' 
@@ -129,6 +136,7 @@ while not done_intake:
    
 
 listener.stop()
+logger.info('Resting HR, {}'.format(np.round(np.mean(heart_rates)), 1))
 logger.handlers.clear()
 logging.shutdown()
 print('Done!')

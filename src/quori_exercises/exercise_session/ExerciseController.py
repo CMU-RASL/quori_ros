@@ -6,7 +6,7 @@ from scipy.spatial.distance import euclidean
 import matplotlib.pyplot as plt
 import multiprocessing
 import rospy
-from std_msgs.msg import Float64MultiArray, String
+from std_msgs.msg import Float64MultiArray, String, Int32
 from datetime import datetime, timedelta
 from pytz import timezone
 import time
@@ -18,7 +18,7 @@ import syllables
 
 class ExerciseController:
 
-    def __init__(self, replay, log_filename, style):
+    def __init__(self, replay, log_filename, style, resting_hr, max_hr):
 
         #Set initial parameters
         self.replay = replay
@@ -27,6 +27,8 @@ class ExerciseController:
         self.nonverbal_cadence = 2
         self.intercept = 0.6477586140350873
         self.slope = 0.31077594
+        self.resting_hr = resting_hr
+        self.max_hr = max_hr
 
         #Robot style 0 - very firm, 1 - firm, 2 - neutral, 3 - encouraging, 4 - very encouraging
         self.update_robot_style(style)
@@ -37,9 +39,13 @@ class ExerciseController:
             self.sound_pub = rospy.Publisher("quori_sound", String, queue_size=10)
             self.movement_pub = rospy.Publisher('quori/joint_trajectory_controller/command', JointTrajectory, queue_size=10)
             self.emotion_pub = rospy.Publisher('quori/face_generator_emotion', Float64MultiArray, queue_size=10)
+            self.heart_rate_sub = rospy.Subscriber("/heart_rate", Int32, self.heart_rate_callback, queue_size=3000)
 
         #Create data storage
         self.angles = []
+        self.heart_rates = []
+        self.hrr = []
+        self.all_heart_rates = []
         self.performance = []
         self.peaks = []
         self.feedback = []
@@ -74,6 +80,8 @@ class ExerciseController:
     def start_new_set(self, exercise_name, set_num, tot_sets):
         #Update data storage
         self.angles.append(np.empty((0, len(ANGLE_INFO)*3)))
+        self.heart_rates.append([])
+        self.hrr.append([])
         self.performance.append(np.empty((0, len(EXERCISE_INFO[exercise_name]['comparison_joints']))))
         self.peaks.append([])
         self.feedback.append([])
@@ -96,6 +104,11 @@ class ExerciseController:
         self.message(robot_message)
         self.change_expression('smile', self.start_set_smile, 4)
 
+    def heart_rate_callback(self, hr_message):
+        self.all_heart_rates.append(hr_message.data)
+        self.heart_rates[-1].append(hr_message.data)
+        hrr = (hr_message.data - self.resting_hr) / float(self.max_hr - self.resting_hr)
+        self.hrr[-1].append(hrr)
 
     def calc_dist_worker(self, ind, series1, series2, q):
         q.put((ind, fastdtw(series1, series2, dist=euclidean)))
@@ -513,7 +526,14 @@ class ExerciseController:
         for ci in c:
 
             key1 = self.current_exercise.replace('_', ' ')
-            key2 = 'low'
+            if self.hrr[-1][-1] < 0.15:
+                key2 = 'low'
+            elif self.hrr[-1][-1] < 0.3:
+                key2 = 'moderate'
+            else:
+                key3 = 'high'
+            self.logger.info('HRR is {}, Fatigue is {}'.format(self.hrr[-1][-1], key2))
+            # key2 = 'low'
             key3 = ci
             key4 = styles[self.robot_style]
             m_to_add = ALL_MESSAGES[key1][key2][key3][key4]
