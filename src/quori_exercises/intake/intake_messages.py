@@ -3,6 +3,9 @@ INTAKE_MESSAGES = {
     'Introduction':{
         'Greeting':
             ['Welcome and thank you for taking the time to be part of this research study. My name is Quori. How are you today? '],
+        
+        'Good':
+            ['I am good. Thank you for asking.'],
 
         
         'Fun':
@@ -20,27 +23,29 @@ INTAKE_MESSAGES = {
 
     'Consent':{
         'Start consent form':
-            ['Before we begin I need to ask you some basic information and go over the consent form in front of you.'],
-
-        
+            ['Before we begin, I need to ask you some basic information and go over the consent form in front of you.'],
         
         'Part 1':
-            ['The first part goes over the purpose procedure risks and your compensation for participating in the study. Please take a minute to read\
-                through the form.'],
+            ['The first part goes over the purpose procedure risks and your compensation for taking part in the study. Please take a minute to read through the form.'],
+
+        # 'Part 1':
+        #     ['The first part goes over the purpose procedure risks and your compensation for taking part in\
+        #     the study. Please take a minute to read\
+        #     through the form.'],
         
         'Part 2':
             ['The second part goes over if you can give us permission to use the audio and video recordings taken during this study for research communication. There are three levels of permission. Please read through and choose one. Let me know when you are done.'],
       
         'Part 3':
-            ['Please read the block below the current one and sign the consent form. Once you are done pleae let me know. My assistant will be here to help you.'],
+            ['Please read the block below the current one and sign the consent form. Once you are done please let me know. My assistant will be here to help you.'],
         
         'Part 4':
             ['Thank you for signing the consent form. The next part will ask some demographic questions.\
               Please answer them to the best of your ability. Once you are done with the page, please let me know. '],
 
-       'Part 5':
-            ['Thank you for completing that part. We will now move on to some personality questions.\
-              Please answer them to the best of your ability. Once you are done with the page, please let me know. If you need help, feel free to call over my assistant'],
+    #    'Part 5':
+    #         ['Thank you for completing that part. We will now move on to some personality questions.\
+    #           Please answer them to the best of your ability. Once you are done with the page, please let me know. If you need help, feel free to call over my assistant'],
        
        'Explanation':
             ['As a recap  you will be completing a series of exercises and I will be evaluating you on your performance. \
@@ -75,22 +80,23 @@ INTAKE_MESSAGES = {
         'Dumbbells':
             ['We have some dumbbells here for you to use if you are comfortable.\
              You can feel free to use them to perform the exercises but if at any point the weight becomes too much\
-            you can feel free to drop them in between sets and just use bodyweight.']
+            you can feel free to drop them in between sets and just use bodyweight.'],
         
-        #add part about questions they might have 
+        'Questions':
+            ['Do you have any questions about the exercises or the routine? My assistant can help you with any questions you have.']
+
     
     },
 
     'Coach type':{
-        #edit!!
         'Ask type':
-            ['I have two different types of coaching styles I can be depending on what you prefer. Type 1 is more firm with less encouragement and Type 2 is less firm with more encouragement. Which type would you prefer: Type 1 or Type 2?']
+            ['I want to be the best coach I can for you, so I want to understand how you like to be coached. For example, when you make a mistake, I could give you feedback that sounded like “Amazing effort! Lets aim for full range next time”. Or I could say something like “Focus on improving your range. Keep pushing!” Do you think you like the first way or the second way?']
 
     },
 
     'Start exercise':{
         'Start':
-            ['Thank you for your responses. If you want to use any dumbbells please pick up the ones that you want. Let us begin the exercise. ']
+            ['We will now begin the exercise routines. If you want to use any dumbbells please pick up the ones that you want.']
     },
 
     'Fall back': {

@@ -34,9 +34,13 @@ def get_message():
     if key_specific=="back":
         logger.info('Key Specific, {}'.format(key_specific))
         return get_message()
+    elif key_specific=="quit":
+        logger.info('Quit')
+        return "quit"
+       
     logger.info('Key Specific, {}'.format(key_specific))
-    #logger.info('Message, {}'.format(INTAKE_MESSAGES[key][key_specific]))
 
+        
     return INTAKE_MESSAGES[key][key_specific]
 
 rospy.init_node('intake_session', anonymous=True)
@@ -114,13 +118,13 @@ while not done_intake:
         # logger.info('End speaking')
         # print("End speaking")
         
-    elif speak=="back":
+    elif speak=="b":
         #done_intake=True
         #logger.info('Quit')
         continue
     
     cont=input("Quit or Continue?")
-    if cont=="quit":
+    if cont=="q":
         done_intake=True
         logger.info('Quit')
     elif cont=="":
