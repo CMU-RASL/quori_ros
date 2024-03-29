@@ -17,9 +17,7 @@ ANGLE_ORDER = {
 EXERCISE_INFO = {
     'bicep_curls': {
         'segmenting_joints': [('right_elbow', 0),
-                                ('left_elbow',  0),
-                                ('right_elbow',  2),
-                                ('left_elbow',  2)],
+                                ('left_elbow',  0)],
         'comparison_joints': [('right_shoulder', [0, 1, 2]), 
                                 ('left_shoulder', [0, 1, 2]), 
                                 ('right_elbow', [0, 1, 2]),
@@ -34,8 +32,7 @@ EXERCISE_INFO = {
     },
     'lateral_raises': {
         'segmenting_joints': [('right_shoulder', 2), 
-                                ('left_shoulder', 2),
-                                ('right_elbow', 2)],
+                                ('left_shoulder', 2)],
         'comparison_joints': [('right_shoulder', [0, 1, 2]), 
                         ('left_shoulder', [0, 1, 2]), 
                         ('right_elbow', [0, 1, 2]),
@@ -55,7 +52,7 @@ for exercise in EXERCISE_INFO:
         EXERCISE_INFO[exercise]['segmenting_joint_inds'].append(ANGLE_ORDER[group][ind])
 
 #/home/quori4/quori_files/quori_ros/ (Add that to the beginning to run on the robot, otherwise, stick with src/)
-with open('/home/quori4/quori_files/quori_ros/src/quori_exercises/experts/new_experts_smaller.pickle', 'rb') as handle:
+with open('src/quori_exercises/experts/new_experts_smaller.pickle', 'rb') as handle:
     NEW_EXPERTS = pickle.load(handle)
 
 for exercise in NEW_EXPERTS:
@@ -97,5 +94,5 @@ ALL_MESSAGES = {}
 for e in ['bicep curls', 'lateral raises']:
     ALL_MESSAGES[e] = {}
     for f in ['low', 'moderate', 'high']:
-        with open('/home/quori4/quori_files/quori_ros/src/quori_exercises/exercise_session/{}_{}.json'.format(e, f)) as file:
+        with open('src/quori_exercises/exercise_session/{}_{}.json'.format(e, f)) as file:
             ALL_MESSAGES[e][f] = json.load(file)

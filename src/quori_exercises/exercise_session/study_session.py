@@ -9,17 +9,22 @@ from datetime import datetime
 from pytz import timezone
 import logging
 import time
+import pickle
 
 #Parameters
-MIN_LENGTH = 15
+MIN_LENGTH = 20
 MAX_LENGTH = 30
 MAX_REPS = 10
-REST_TIME = 40
-EXERCISE_LIST = ['bicep_curls']
+REST_TIME = 20
+EXERCISE_LIST = ['bicep_curls', 'lateral_raises']
 ROBOT_STYLE = 3
 
 #Change at beginning of study
 PARTICIPANT_ID = '1'
+RESTING_HR = 75
+AGE = 22
+MAX_HR = 220-AGE
+
 VERBAL_CADENCE = 2 #1 is low, 2 is medium, 3 is high
 NONVERBAL_CADENCE = 2
 
@@ -29,10 +34,10 @@ rate = rospy.Rate(10)
 
 #Start log file
 log_filename = '{}.log'.format(datetime.now().strftime("%Y-%m-%d--%H-%M-%S"))
-data_filename = '{}.npz'.format(datetime.now().strftime("%Y-%m-%d--%H-%M-%S"))
+data_filename = '{}.pickle'.format(datetime.now().strftime("%Y-%m-%d--%H-%M-%S"))
 
 #Initialize evaluation object
-controller = ExerciseController(False, log_filename, ROBOT_STYLE)
+controller = ExerciseController(False, log_filename, ROBOT_STYLE, RESTING_HR, MAX_HR)
 
 #For each exercise
 for set_num, exercise_name in enumerate(EXERCISE_LIST):
@@ -91,19 +96,18 @@ for set_num, exercise_name in enumerate(EXERCISE_LIST):
         robot_message = "Exercise session complete"
         controller.message(robot_message)
     
-    controller.plot_angles()
+controller.plot_angles()
 
-    np.savez('src/quori_exercises/saved_data/{}'.format(data_filename),      
-                            angles=controller.angles,
-                            peaks=controller.peaks,
-                            feedback=controller.feedback,
-                            times=controller.times,
-                            exercise_names=controller.exercise_name_list
-                        )
-    controller.logger.info('Saved file {}'.format(data_filename))
+data = {'angles': controller.angles, 'peaks': controller.peaks, 'feedback': controller.feedback, 'times': controller.times, 'exercise_names': controller.exercise_name_list, 'all_hr': controller.all_heart_rates, 'heart_rates': controller.heart_rates, 'hrr': controller.hrr}
+dbfile = open('src/quori_exercises/saved_data/{}'.format(data_filename), 'ab')
 
-    controller.logger.handlers.clear()
-    logging.shutdown()
-    print('Done!')
+pickle.dump(data, dbfile)                    
+dbfile.close()
+
+controller.logger.info('Saved file {}'.format(data_filename))
+
+controller.logger.handlers.clear()
+logging.shutdown()
+print('Done!')
 
 plt.show()
