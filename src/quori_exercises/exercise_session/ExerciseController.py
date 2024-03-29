@@ -165,7 +165,7 @@ class ExerciseController:
             best_distance = distances[closest_expert]
             expert_label = labels[closest_expert]
 
-            self.logger.info('Group {} - Closest Good Expert {}, Closest Expert Distance {} and Label {}'.format(joint_group, np.round(good_distance), np.round(best_distance), expert_label))
+            # self.logger.info('Group {} - Closest Good Expert {}, Closest Expert Distance {} and Label {}'.format(joint_group, np.round(good_distance), np.round(best_distance), expert_label))
 
             if (good_distance > best_distance and good_distance < EXERCISE_INFO[self.current_exercise]['threshold1']):
                 eval_list.append(1)
@@ -532,7 +532,7 @@ class ExerciseController:
                 key2 = 'moderate'
             else:
                 key3 = 'high'
-            self.logger.info('HRR is {}, Fatigue is {}'.format(self.hrr[-1][-1], key2))
+            self.logger.info('Heart Rate is {}, HRR is {}, Fatigue is {}'.format(self.heart_rates[-1][-1], self.hrr[-1][-1], key2))
             # key2 = 'low'
             key3 = ci
             key4 = styles[self.robot_style]
