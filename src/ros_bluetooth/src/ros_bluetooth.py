@@ -24,7 +24,7 @@ def notification_handler(sender, data):
     now = datetime.now()
     timestamp = now.strftime("%Y-%m-%d %H:%M:%S")
 
-    print(f"{timestamp} - Received data from {sender}: Heart Rate Measurement: {heart_rate}")
+    # print(f"{timestamp} - Received data from {sender}: Heart Rate Measurement: {heart_rate}")
 
     heart_rate_pub.publish(heart_rate)  # Publish heart rate to ROS
 
@@ -52,20 +52,20 @@ def shutdown_handler(loop):
         task.cancel()
     print("Shutdown initiated, stopping event loop...")
 
-    # Plotting code
-    if timestamps:
-        n_timestamps = [datetime.strptime(ts, "%Y-%m-%d %H:%M:%S") for ts in timestamps]
-        n_timestamps = [(dt - n_timestamps[0]).total_seconds() for dt in n_timestamps]
+    # # Plotting code
+    # if timestamps:
+    #     n_timestamps = [datetime.strptime(ts, "%Y-%m-%d %H:%M:%S") for ts in timestamps]
+    #     n_timestamps = [(dt - n_timestamps[0]).total_seconds() for dt in n_timestamps]
 
-        plt.figure(figsize=(10, 6))
-        plt.plot(n_timestamps, heart_rates, marker='o', linestyle='-', color='blue')
-        plt.title('Heart Rate vs. Time')
-        plt.xlabel('Time (seconds)')
-        plt.ylabel('Heart Rate (bpm)')
-        plt.grid(True)
-        plt.show()
-    else:
-        print("No data to plot.")
+    #     plt.figure(figsize=(10, 6))
+    #     plt.plot(n_timestamps, heart_rates, marker='o', linestyle='-', color='blue')
+    #     plt.title('Heart Rate vs. Time')
+    #     plt.xlabel('Time (seconds)')
+    #     plt.ylabel('Heart Rate (bpm)')
+    #     plt.grid(True)
+    #     plt.show()
+    # else:
+    #     print("No data to plot.")
 
 if __name__ == "__main__":
     # Initialize ROS node
