@@ -12,17 +12,20 @@ import time
 import pickle
 
 #Parameters
-MIN_LENGTH = 20
-MAX_LENGTH = 30
+MIN_LENGTH = 30
+MAX_LENGTH = 45
 MAX_REPS = 10
-REST_TIME = 20
-EXERCISE_LIST = ['bicep_curls', 'lateral_raises']
-ROBOT_STYLE = 3
+REST_TIME = 40
+EXERCISE_LIST = ['bicep_curls', 'bicep_curls', 'lateral_raises', 'lateral_raises']
 
 #Change at beginning of study
 PARTICIPANT_ID = '1'
-RESTING_HR = 75
-AGE = 22
+RESTING_HR = 69
+AGE = 28
+
+#CHange at beginning of each round
+ROBOT_STYLE = 3 #1 is firm, 3 is encouraging
+
 MAX_HR = 220-AGE
 
 VERBAL_CADENCE = 2 #1 is low, 2 is medium, 3 is high
@@ -33,8 +36,8 @@ rospy.init_node('study_session', anonymous=True)
 rate = rospy.Rate(10)
 
 #Start log file
-log_filename = '{}.log'.format(datetime.now().strftime("%Y-%m-%d--%H-%M-%S"))
-data_filename = '{}.pickle'.format(datetime.now().strftime("%Y-%m-%d--%H-%M-%S"))
+log_filename = 'Participant_{}_Style_{}_{}.log'.format(PARTICIPANT_ID, ROBOT_STYLE, datetime.now().strftime("%Y-%m-%d--%H-%M-%S"))
+data_filename = 'Participant_{}_Style_{}_{}.pickle'.format(PARTICIPANT_ID, ROBOT_STYLE, datetime.now().strftime("%Y-%m-%d--%H-%M-%S"))
 
 #Initialize evaluation object
 controller = ExerciseController(False, log_filename, ROBOT_STYLE, RESTING_HR, MAX_HR)
@@ -93,7 +96,7 @@ for set_num, exercise_name in enumerate(EXERCISE_LIST):
                 robot_message = "Rest for {} more seconds.".format(int(REST_TIME/2))
                 controller.message(robot_message)
     else:
-        robot_message = "Exercise session complete"
+        robot_message = "Round complete. Please fill out a survey about this round."
         controller.message(robot_message)
     
 controller.plot_angles()
