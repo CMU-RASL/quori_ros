@@ -71,13 +71,14 @@ def get_key_evaluation():
     
 
 def get_key_exercise():
-    response_num=input("1. Start explanation \n 2. Explain exercise routine \n 3. Dumbbells \n 4. Questions \n 5. back \n")
+    response_num=input("1. Start explanation \n 2. Explain exercise routine \n 3. Dumbbells \n 4. Questions \n 5. back \n 6. Demo explanation \n")
     try:
         if response_num == "1": key_specific="Start explanation"
         elif response_num== "2": key_specific="Explain exercise routine"
         elif response_num == "3": key_specific="Dumbbells"
         elif response_num == "4": key_specific="Questions"
         elif response_num == "5": key_specific="back"
+        elif response_num == "6": key_specific="Demo explanation"
         return key_specific
     except:
         print("Invalid input")
