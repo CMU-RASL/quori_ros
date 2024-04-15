@@ -526,6 +526,7 @@ class ExerciseController:
         for ci in c:
 
             key1 = self.current_exercise.replace('_', ' ')
+            key2 = 'low'
             if self.hrr[-1][-1] < 0.15:
                 key2 = 'low'
             elif self.hrr[-1][-1] < 0.3:

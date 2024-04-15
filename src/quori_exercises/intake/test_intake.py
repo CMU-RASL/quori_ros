@@ -111,6 +111,10 @@ listener.start()
 
 while not done_intake:
     message=get_message()
+    if message=="quit":
+        done_intake=True
+        logger.info('Quit')
+        break
     print(message)
     # print("here")
     speak=input("Press enter to speak, else type back to go back")
