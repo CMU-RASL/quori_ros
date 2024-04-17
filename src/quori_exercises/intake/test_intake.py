@@ -21,11 +21,7 @@ def on_press(key):
     except AttributeError:
         logger2.info(f'Special key {key} pressed')
         return
-# def on_release(key):
-#     logger.info(f'Key {key} released')
-#     if key == keyboard.Key.esc:
-#         # Stop listener
-#         return False
+
 
 def get_message():
     key=ti.get_key()
@@ -101,10 +97,7 @@ logger2.info('Begin, {}'.format('Starting intake'))
 print("starting intake")
 
 
-# with keyboard.Listener(
-#         on_press=on_press,
-#         on_release=on_release) as listener:
-#     listener.join()
+
 listener = keyboard.Listener(on_press=on_press)
 listener.start()
 

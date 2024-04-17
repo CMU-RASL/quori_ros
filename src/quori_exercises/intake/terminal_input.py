@@ -41,17 +41,14 @@ def get_key_intro():
     
 
 def get_key_consent():
-    response_num=input("1.Start consent form \n 2. Part 1 \n 3. Part 2 \n 4. Part 3 \n 5. Part 4 \n 6. Explanation \n 7. Time \n 8. back \n")
+    response_num=input("1.Start consent form \n 2. Part 2 \n 3. Part 3 \n 4. Explanation \n 5. Time \n 6. back \n")
     try:
         if response_num == "1": key_specific="Start consent form"
-        elif response_num== "2": key_specific="Part 1"
-        elif response_num == "3": key_specific="Part 2"
-        elif response_num == "4": key_specific="Part 3"
-        elif response_num == "5": key_specific="Part 4"
-        #elif response_num == "6": key_specific="Part 5"
-        elif response_num == "6": key_specific="Explanation"
-        elif response_num == "7": key_specific="Time"
-        elif response_num == "8": key_specific="back"
+        elif response_num == "2": key_specific="Part 2"
+        elif response_num == "3": key_specific="Part 3"
+        elif response_num == "4": key_specific="Explanation"
+        elif response_num == "5": key_specific="Time"
+        elif response_num == "6": key_specific="back"
         return key_specific
     except:
         print("Invalid input")
@@ -59,11 +56,14 @@ def get_key_consent():
     
 
 def get_key_evaluation():
-    response_num=input("1. Pain \n 2. Energy Level \n 3. back \n")
+    response_num=input("1. Begin evaluation \n 2. Enjoy? \n 3. Why? \n 4. Energy Level \n 5. Thank you \n 6. back \n")
     try:
-        if response_num == "1": key_specific="Pain"
-        elif response_num== "2": key_specific="Energy Level"
-        elif response_num == "3": key_specific="back"
+        if response_num == "1": key_specific="Begin evaluation"
+        elif response_num== "2": key_specific="Enjoy?"
+        elif response_num == "3": key_specific="Why?"
+        elif response_num == "4": key_specific="Energy Level"
+        elif response_num == "5": key_specific="Thank you"
+        elif response_num == "6": key_specific="back"
         return key_specific
     except:
         print("Invalid input")
@@ -71,14 +71,13 @@ def get_key_evaluation():
     
 
 def get_key_exercise():
-    response_num=input("1. Start explanation \n 2. Explain exercise routine \n 3. Dumbbells \n 4. Questions \n 5. back \n 6. Demo explanation \n")
+    response_num=input("1. Explain exercise routine \n 2. Dumbbells \n 3. Questions \n 4. back \n 5. Demo explanation \n")
     try:
-        if response_num == "1": key_specific="Start explanation"
-        elif response_num== "2": key_specific="Explain exercise routine"
-        elif response_num == "3": key_specific="Dumbbells"
-        elif response_num == "4": key_specific="Questions"
-        elif response_num == "5": key_specific="back"
-        elif response_num == "6": key_specific="Demo explanation"
+        if response_num== "1": key_specific="Explain exercise routine"
+        elif response_num == "2": key_specific="Dumbbells"
+        elif response_num == "3": key_specific="Questions"
+        elif response_num == "4": key_specific="back"
+        elif response_num == "5": key_specific="Demo explanation"
         return key_specific
     except:
         print("Invalid input")
@@ -86,11 +85,11 @@ def get_key_exercise():
     
 
 def get_key_coach_type():
-    response_num=input("Ask coach type question?")
+    response_num=input("Enter to ask type \n b to go back \n q to quit \n")
     try:
         if response_num == "": key_specific="Ask type"
-        elif response_num== "quit": key_specific="quit"
-        elif response_num == "back": key_specific="back"
+        elif response_num== "q": key_specific="quit"
+        elif response_num == "b": key_specific="back"
         return key_specific
     except:
         print("Invalid input")
@@ -140,8 +139,6 @@ def get_terminal_input(key):
         key_specific=get_key_fall_back()
     elif key == "quit":
         key_specific=quit()
-
-
 
     return key_specific
 

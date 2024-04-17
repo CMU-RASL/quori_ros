@@ -22,19 +22,11 @@ INTAKE_MESSAGES = {
     },
 
     'Consent':{
-        'Start consent form':
-            ['Before we begin, I need to ask you some basic information and go over the consent form in front of you.'],
-        
-        'Part 1':
-            ['Please take a minute to read through the form. Please write your name when you are done.'],
 
-        # 'Part 1':
-        #     ['The first part goes over the purpose procedure risks and your compensation for taking part in\
-        #     the study. Please take a minute to read\
-        #     through the form.'],
-        
-        # 'Part 2':
-        #     ['The second part goes over if you can give us permission to use the audio and video recordings taken during this study for research communication. There are three levels of permission. Please read through and choose one. Let me know when you are done.'],
+        'Start consent form':
+            ['Before we begin, I need to ask you some basic information and go over the consent form in front of you. Please take a minute to read through the form. Please write your name when you are done.'],
+
+       
       
         'Part 2':
             ['Please read the block below your signature and choose one of the three options.'],
@@ -42,9 +34,6 @@ INTAKE_MESSAGES = {
         'Part 3':
             ['Thank you for signing the consent form. '],
 
-    #    'Part 5':
-    #         ['Thank you for completing that part. We will now move on to some personality questions.\
-    #           Please answer them to the best of your ability. Once you are done with the page, please let me know. If you need help, feel free to call over my assistant'],
        
        'Explanation':
             ['As a recap  you will be completing a series of exercises and I will be evaluating you on your performance. \
@@ -55,13 +44,27 @@ INTAKE_MESSAGES = {
             ['Let me know if you are done or need more time.']
     },
 
+    'Evaluation':{
+        'Begin evaluation':
+            ['Before I explain the exercises, I would like to ask you a few questions.'],
+        
+        "Enjoy?":
+            ['Do you enjoy exercising?'],
+        
+        "Why?":
+            ['Why do you exercise?'],
+
+        'Energy Level':
+            ['On a scale of 1 to 10, how would you rate your energy level today?'],
+        
+        'Thank you':
+            ['Thank you for answering the questions. I will now explain the exercises.'],
+
+        
+    },
 
     
-
     'Exercise explanation': {
-        # 'Start explanation':
-        #     ['You will be doing two types of exercises today. One is lateral raises and the other is bicep curls. Please look at the screen in front of you.\
-        #      The first exercise shown are the bicep curls and the second shown is the lateral raises.' ],
              
         'Explain exercise routine':
             ['You will perform two rounds with 4 sets each. The first two sets will be bicep curls and the next two are lateral raises.In between each set there will be a rest period. Please look at the screen in front of you to see how to perform the exercises.'],
@@ -94,7 +97,7 @@ INTAKE_MESSAGES = {
 
     'Fall back': {
         'No answer':
-            ['Sorry I am unable to answer your question'],
+            ['Sorry I am unable to answer your question. My human assistant can help you with that.'],
 
         'Repeat':
             ['Sorry I did not understand you. Can you please repeat the question?'],
