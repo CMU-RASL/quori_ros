@@ -86,7 +86,10 @@ INTAKE_MESSAGES = {
 
     'Coach type':{
         'Ask type':
-            ['I want to be the best coach I can be for you, so I want to understand how you like to be coached. For example, when you make a mistake, I could give you feedback that sounds like “Amazing effort! Lets aim for full range next time”. Or I could say something like “Focus on improving your range. Keep pushing!” Do you think you like the first way or the second way?']
+            ['I want to be the best coach I can be for you, so I want to understand how you like to be coached. For example, when you make a mistake, I could give you feedback that sounds like “Amazing effort! Lets aim for full range next time”. Or I could say something like “Focus on improving your range. Keep pushing!” Do you think you like the first way or the second way?'],
+
+        'Thank you':
+            ['Thank you for answering the question.']
 
     },
 
