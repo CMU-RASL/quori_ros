@@ -11,7 +11,7 @@ from std_msgs.msg import String, Int32
 import numpy as np
 
 #Change at the beginning of each session
-PARTICIPANT_ID = '1'
+PARTICIPANT_ID = '4'
 
 def on_press(key):
     try:

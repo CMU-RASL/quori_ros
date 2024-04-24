@@ -19,12 +19,13 @@ REST_TIME = 40
 EXERCISE_LIST = ['bicep_curls', 'bicep_curls', 'lateral_raises', 'lateral_raises']
 
 #Change at beginning of study
-PARTICIPANT_ID = '1'
-RESTING_HR = 69
-AGE = 28
+PARTICIPANT_ID = '4'
+RESTING_HR = 75
+AGE = 27
 
 #CHange at beginning of each round
-ROBOT_STYLE = 3 #1 is firm, 3 is encouraging
+ROBOT_STYLE = 1 #1 is firm, 3 is encouraging
+ROUND_NUM = 2
 
 MAX_HR = 220-AGE
 
@@ -36,11 +37,20 @@ rospy.init_node('study_session', anonymous=True)
 rate = rospy.Rate(10)
 
 #Start log file
-log_filename = 'Participant_{}_Style_{}_{}.log'.format(PARTICIPANT_ID, ROBOT_STYLE, datetime.now().strftime("%Y-%m-%d--%H-%M-%S"))
-data_filename = 'Participant_{}_Style_{}_{}.pickle'.format(PARTICIPANT_ID, ROBOT_STYLE, datetime.now().strftime("%Y-%m-%d--%H-%M-%S"))
+log_filename = 'Participant_{}_Style_{}_Round_{}_{}.log'.format(PARTICIPANT_ID, ROBOT_STYLE, ROUND_NUM, datetime.now().strftime("%Y-%m-%d--%H-%M-%S"))
+data_filename = 'Participant_{}_Style_{}_Round_{}_{}.pickle'.format(PARTICIPANT_ID, ROBOT_STYLE, ROUND_NUM, datetime.now().strftime("%Y-%m-%d--%H-%M-%S"))
 
 #Initialize evaluation object
 controller = ExerciseController(False, log_filename, ROBOT_STYLE, RESTING_HR, MAX_HR)
+
+if ROUND_NUM == 1:
+    robot_message = "We are going to start round 1 of the exercises now."
+    controller.message(robot_message)
+else:
+    robot_message = "We are going to start round 2 of the exercises now."
+    controller.message(robot_message)
+
+rospy.sleep(2)
 
 #For each exercise
 for set_num, exercise_name in enumerate(EXERCISE_LIST):
@@ -99,7 +109,7 @@ for set_num, exercise_name in enumerate(EXERCISE_LIST):
         robot_message = "Round complete. Please fill out a survey about this round."
         controller.message(robot_message)
     
-controller.plot_angles()
+# controller.plot_angles()
 
 data = {'angles': controller.angles, 'peaks': controller.peaks, 'feedback': controller.feedback, 'times': controller.times, 'exercise_names': controller.exercise_name_list, 'all_hr': controller.all_heart_rates, 'heart_rates': controller.heart_rates, 'hrr': controller.hrr}
 dbfile = open('src/quori_exercises/saved_data/{}'.format(data_filename), 'ab')
@@ -113,4 +123,4 @@ controller.logger.handlers.clear()
 logging.shutdown()
 print('Done!')
 
-plt.show()
+# plt.show()
