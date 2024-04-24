@@ -78,7 +78,10 @@ source devel/setup.bash
 
 ### Second Computer
 - Terminal 1 (to check the camera frame) `rosrun image_view image_view image:=/astra_ros/devices/default/color/image_color`
-- Terminal 2 `rosrun quori_exercises study_session.py`
+
+- Terminal 2 
+1. `rosrun quori_exercises test_intake.py`
+2. `rosrun quori_exercises study_session.py`
 
 ## General Troubleshooting
 
