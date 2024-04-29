@@ -24,9 +24,8 @@ INTAKE_MESSAGES = {
     'Consent':{
 
         'Start consent form':
-            ['Before we begin, I need to ask you some basic information and go over the consent form in front of you. Please take a minute to read through the form. Please write your name when you are done.'],
+            ['Before we begin, I need to ask you some basic information and go over the consent form next to you. Please take a minute to read through the form. Please write your name when you are done and let me know'],
 
-       
       
         'Part 2':
             ['Please read the block below your signature and choose one of the three options.'],
@@ -47,7 +46,10 @@ INTAKE_MESSAGES = {
     'Evaluation':{
         'Begin evaluation':
             ['Before I explain the exercises, I would like to ask you a few questions.'],
-        
+            
+        'Age':
+            ['How old are you?'],
+            
         "Enjoy?":
             ['Do you enjoy exercising?'],
         
@@ -70,9 +72,6 @@ INTAKE_MESSAGES = {
             ['You will perform two rounds with 4 sets each. The first two sets will be bicep curls and the next two are lateral raises.In between each set there will be a rest period. Please look at the screen in front of you to see how to perform the exercises.'],
              
         
-        'Dumbbells':
-            ['We have some dumbbells here for you to use if you choose to.'],
-        
         'Questions':
             ['Do you have any questions about the exercises or the routine? My assistant can help you with any questions you have.'],
 
@@ -86,7 +85,10 @@ INTAKE_MESSAGES = {
 
     'Coach type':{
         'Ask type':
-            ['I want to be the best coach I can be for you, so I want to understand how you like to be coached. For example, when you make a mistake, I could give you feedback that sounds like “Amazing effort! Lets aim for full range next time”. Or I could say something like “Focus on improving your range. Keep pushing!” Do you think you like the first way or the second way?']
+            ['I want to be the best coach I can be for you, so I want to understand how you like to be coached. For example, when you make a mistake, I could give you feedback that sounds like “Amazing effort! Lets aim for full range next time”. Or I could say something like “Focus on improving your range. Keep pushing!” Do you think you like the first way or the second way?'],
+
+        'Thank you':
+            ['Thank you for answering the question.']
 
     },
 
