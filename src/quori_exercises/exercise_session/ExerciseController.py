@@ -45,7 +45,7 @@ class ExerciseController:
         self.angles = []
         self.heart_rates = []
         self.hrr = []
-        self.all_heart_rates = []
+        self.all_heart_rates = [0]
         self.performance = []
         self.peaks = []
         self.feedback = []
@@ -106,9 +106,6 @@ class ExerciseController:
 
     def heart_rate_callback(self, hr_message):
         self.all_heart_rates.append(hr_message.data)
-        self.heart_rates[-1].append(hr_message.data)
-        hrr = (hr_message.data - self.resting_hr) / float(self.max_hr - self.resting_hr)
-        self.hrr[-1].append(hrr)
 
     def calc_dist_worker(self, ind, series1, series2, q):
         q.put((ind, fastdtw(series1, series2, dist=euclidean)))
@@ -223,6 +220,9 @@ class ExerciseController:
         #Read angle from message
         angle = angle_message.data
         self.angles[-1] = np.vstack((self.angles[-1], np.array(angle)))
+        self.heart_rates[-1].append(self.all_heart_rates[-1])
+        hrr = (self.all_heart_rates[-1] - self.resting_hr) / float(self.max_hr - self.resting_hr)
+        self.hrr[-1].append(hrr)
 
         #Get time
         current_time = rospy.get_time()
@@ -527,9 +527,9 @@ class ExerciseController:
 
             key1 = self.current_exercise.replace('_', ' ')
             key2 = 'low'
-            if self.hrr[-1][-1] < 0.15:
+            if self.hrr[-1][-1] < 0.2:
                 key2 = 'low'
-            elif self.hrr[-1][-1] < 0.3:
+            elif self.hrr[-1][-1] < 0.4:
                 key2 = 'moderate'
             else:
                 key3 = 'high'

@@ -14,17 +14,20 @@ import pickle
 #Parameters
 MIN_LENGTH = 30
 MAX_LENGTH = 45
+SET_LENGTH = 40
 MAX_REPS = 10
 REST_TIME = 40
+#EXERCISE_LIST = ['bicep_curls'] #comment out before actual sessions
 EXERCISE_LIST = ['bicep_curls', 'bicep_curls', 'lateral_raises', 'lateral_raises']
 
 #Change at beginning of study
-PARTICIPANT_ID = '4'
-RESTING_HR = 75
-AGE = 27
+PARTICIPANT_ID = '11'
+RESTING_HR = 97
+AGE = 21
 
-#CHange at beginning of each round
-ROBOT_STYLE = 1 #1 is firm, 3 is encouraging
+
+#Change at beginning of each round
+ROBOT_STYLE = 3#1 is firm, 3 is encouraging
 ROUND_NUM = 2
 
 MAX_HR = 220-AGE
@@ -42,6 +45,7 @@ data_filename = 'Participant_{}_Style_{}_Round_{}_{}.pickle'.format(PARTICIPANT_
 
 #Initialize evaluation object
 controller = ExerciseController(False, log_filename, ROBOT_STYLE, RESTING_HR, MAX_HR)
+rospy.sleep(2)
 
 if ROUND_NUM == 1:
     robot_message = "We are going to start round 1 of the exercises now."
@@ -50,7 +54,7 @@ else:
     robot_message = "We are going to start round 2 of the exercises now."
     controller.message(robot_message)
 
-rospy.sleep(2)
+rospy.sleep(4)
 
 #For each exercise
 for set_num, exercise_name in enumerate(EXERCISE_LIST):
@@ -58,9 +62,16 @@ for set_num, exercise_name in enumerate(EXERCISE_LIST):
     #Start a new set
     controller.start_new_set(exercise_name, set_num+1, len(EXERCISE_LIST))
 
+    #Start set recording
+    if set_num == 0:
+        controller.message("Please choose the face that best shows the pain you are currently experiencing")
+    else:
+        controller.message("Please chooes the face that best shows your pain after resting")
+
     inittime = datetime.now(timezone('EST'))
     controller.logger.info('-------------------Recording!')
     start_message = False
+    halfway_message = False
 
     #Lower arm all the way down
     controller.move_right_arm('halfway', 'sides')
@@ -76,8 +87,12 @@ for set_num, exercise_name in enumerate(EXERCISE_LIST):
 
         controller.flag = True
 
-        #If number of reps is greater than 8 and they have been exercising at least the minimum length
-        if len(controller.peaks[-1])-1 > MAX_REPS and (datetime.now(timezone('EST')) - inittime).total_seconds() > MIN_LENGTH:
+        if (datetime.now(timezone('EST')) - inittime).total_seconds() > SET_LENGTH/2 and not halfway_message:
+            robot_message = "You are halfway"
+            controller.message(robot_message)
+            halfway_message = True 
+
+        if (datetime.now(timezone('EST')) - inittime).total_seconds() > SET_LENGTH:
             break 
 
     controller.flag = False
@@ -90,6 +105,8 @@ for set_num, exercise_name in enumerate(EXERCISE_LIST):
     robot_message = "Rest."
     controller.message(robot_message)
     controller.change_expression('smile', controller.start_set_smile, 4)
+
+    controller.message("Please choose the face that best shows your pain after that set")
 
     rest_start = datetime.now(timezone('EST'))
 

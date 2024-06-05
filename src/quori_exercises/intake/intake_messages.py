@@ -37,7 +37,7 @@ INTAKE_MESSAGES = {
        'Explanation':
             ['As a recap  you will be completing a series of exercises and I will be evaluating you on your performance. \
              I will be recording your video and audio during the session. I will also be asking you questions about your experience. \
-             I will be using this information to improve my coaching skills. If you have any questions my assistant can answer them for you.'],
+             I will be using this information to improve my coaching skills.'],
 
         'Time':
             ['Let me know if you are done or need more time.']
@@ -69,11 +69,11 @@ INTAKE_MESSAGES = {
     'Exercise explanation': {
              
         'Explain exercise routine':
-            ['You will perform two rounds with 4 sets each. The first two sets will be bicep curls and the next two are lateral raises.In between each set there will be a rest period. Please look at the screen in front of you to see how to perform the exercises.'],
+            ['You will perform two rounds with 4 sets each. The first two sets will be bicep curls and the next two are lateral raises. Each set will be for 40 seconds. Please do the exercises at your own pace. In between each set there will be a rest period. Please look at the screen next to you to see how to perform the exercises.'],
              
         
         'Questions':
-            ['Do you have any questions about the exercises or the routine? My assistant can help you with any questions you have.'],
+            ['Do you have any questions about the exercises or the routine? '],
 
         
         'Demo explanation':
