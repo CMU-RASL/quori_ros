@@ -51,10 +51,10 @@ INTAKE_MESSAGES = {
             ['How old are you?'],
             
         "Enjoy?":
-            ['Do you enjoy exercising?'],
+            ['Is exercise just something that needs to be done or something that you choose to do'],
         
         "Why?":
-            ['Why do you exercise?'],
+            ['Do you feel like someone else is making you exercise, such as your doctor or a family member?'],
 
         'Energy Level':
             ['On a scale of 1 to 10, how would you rate your energy level today?'],
