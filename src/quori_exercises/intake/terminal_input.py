@@ -56,14 +56,15 @@ def get_key_consent():
     
 
 def get_key_evaluation():
-    response_num=input("1. Begin evaluation \n 2. Age \n 3. Enjoy? \n 4. Why? \n 5. Energy Level \n 6. Thank you \n b to go back \n")
+    response_num=input("1. Begin evaluation \n 2. Age \n 3. Enjoy? \n 4. Why? \n 5. Energy Level \n 6. Pain Level \n 7. Thank you \n b to go back \n")
     try:
         if response_num == "1": key_specific="Begin evaluation"
         elif response_num== "2": key_specific="Age"
         elif response_num== "3": key_specific="Enjoy?"
         elif response_num == "4": key_specific="Why?"
         elif response_num == "5": key_specific="Energy Level"
-        elif response_num == "6": key_specific="Thank you"
+        elif response_num == "6": key_specific="Pain Level"
+        elif response_num == "7": key_specific="Thank you"
         elif response_num == "b": key_specific="back"
         return key_specific
     except:

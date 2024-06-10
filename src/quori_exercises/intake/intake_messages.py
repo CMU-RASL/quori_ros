@@ -58,6 +58,9 @@ INTAKE_MESSAGES = {
 
         'Energy Level':
             ['On a scale of 1 to 10, how would you rate your energy level today?'],
+
+        'Pain Level':
+            ['Please look at the sheet next to you showing the faces. On a scale of 0 to 10, how would you rate your pain level right now?'],
         
         'Thank you':
             ['Thank you for answering the questions. I will now explain the exercises.'],
