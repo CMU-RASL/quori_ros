@@ -3,8 +3,8 @@ import rospy
 import rosbag
 import numpy as np
 import matplotlib.pyplot as plt
-from config import *
-from ExerciseController import ExerciseController
+from quori_ros.src.quori_exercises.exercise_session.config_Quori import *
+from quori_ros.src.quori_exercises.exercise_session.ExerciseController_Quori import ExerciseController
 from datetime import datetime
 from pytz import timezone
 import logging

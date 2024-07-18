@@ -5,12 +5,12 @@ from pytz import timezone
 from datetime import datetime
 import numpy as np
 from sensor_msgs.msg import Image
-from config import *
+from quori_ros.src.quori_exercises.exercise_session.config_Quori import *
 import cv2
 
 import warnings
 warnings.filterwarnings("ignore")
-from config import *
+from quori_ros.src.quori_exercises.exercise_session.config_Quori import *
 
 import mediapipe as mp
 from mediapipe.tasks import python

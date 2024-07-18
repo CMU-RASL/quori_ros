@@ -52,11 +52,20 @@ source devel/setup.bash
 Go to Settings in Ubuntu and make sure the output is set to Headphones and the volume is all the way up
 
 
-## Running on the robot + second computer
+## Running on the robot + second computer at CMU
 ```
 cd quori_files/quori_ros
 export ROS_IP=$(hostname -I | awk '{print $1;}')
 export ROS_MASTER_URI=http://quori.wifi.local.cmu.edu:11311 
+export ROS_HOSTNAME=$ROS_IP
+source devel/setup.bash
+```
+
+## Running on two computers or robot + second computer not at CMU
+- First run `hostname -I` to determine the hostname on the master computer
+```
+export ROS_IP=$(hostname -I | awk '{print $1;}')
+export ROS_MASTER_URI=http://{{HOSTNAME HERE}}:11311 
 export ROS_HOSTNAME=$ROS_IP
 source devel/setup.bash
 ```
@@ -72,16 +81,13 @@ source devel/setup.bash
 
 ## Exercise Session setup
 
-### Robot
-- Terminal 1 `roslaunch quori_launch quori_robot_main.launch`
-- Terminal 2 (to record the video) `rosbag record astra_ros/devices/default/color/image_color`
+- To record the video `rosbag record astra_ros/devices/default/color/image_color`
 
-### Second Computer
-- Terminal 1 (to check the camera frame) `rosrun image_view image_view image:=/astra_ros/devices/default/color/image_color`
+- Check the camera frame `rosrun image_view image_view image:=/astra_ros/devices/default/color/image_color`
 
-- Terminal 2 
-1. `rosrun quori_exercises test_intake.py`
-2. `rosrun quori_exercises study_session.py`
+- Check the sound `rostopic pub /quori_sound std_msgs/String "Hello, my name is Quori"`
+
+- Convert bag file to mp4 `python rosbag2video.py {{BAG FILE NAME}}`
 
 ## General Troubleshooting
 
