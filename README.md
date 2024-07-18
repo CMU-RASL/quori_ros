@@ -79,7 +79,7 @@ export ROS_HOSTNAME=$ROS_IP
 source devel/setup.bash
 ```
 
-## Exercise Session setup
+## Useful commands
 
 - To record the video `rosbag record astra_ros/devices/default/color/image_color`
 
@@ -88,6 +88,32 @@ source devel/setup.bash
 - Check the sound `rostopic pub /quori_sound std_msgs/String "Hello, my name is Quori"`
 
 - Convert bag file to mp4 `python rosbag2video.py {{BAG FILE NAME}}`
+
+## Different run cases
+
+1. Run a study with HR monitor with Quori
+    - Quori: Run the pose tracking, camera, sound, face, HR `roslaunch quori_launch study_session_Quori.launch`
+        - This runs the rotated face `simVectors_Quori.py`
+        - This runs the pose_tracking with the Quori directories `pose_tracking_Quori.py` and `config_Quori.py`
+    - RASL Computer: Run the exercise session: `rosrun quori_exercises study_session_Quori.py`
+        - This pulls the config file with the computer directories `config_computer.py`
+        - This uses the full ExerciseController with HR
+    - TBD Computer: Run the wizard of oz: `rosrun quori_exercises wizard_of_oz_speech.py`
+2. Run a demo with Quori and no HR
+    - Quori: Run the pose tracking, camera, sound, face (no HR) `roslaunch quori_launch demo_session_Quori.launch`
+        - This runs the rotated face `simVectors_Quori.py`
+        - This runs the pose_tracking with the Quori directories `pose_tracking_Quori.py` and `config_Quori.py`
+    - RASL Computer: Run the demo session: `rosrun quori_exercises demo_session.py`
+        - This pulls the config file with the computer directories `config_computer.py`
+        - This uses the modified ExerciseController with no HR `ExerciseController_computer`
+    - TBD Computer: Run the wizard of oz: `rosrun quori_exercises wizard_of_oz_speech.py`
+3. Run a demo with only computers/monitors `roslaunch quori_launch demo_session_main_computer.launch`
+    - TBD Computer (Master): Run the USB camera, not rotated face, and sound
+        - This runs the not rotated `simVectors_computer_demo.py`
+        - This uses a USB camera - make sure you have the correct device id
+    - RASL Computer: Run the demo session: `roslaunch quori_launch demo_session_second_computer.launch`
+        - This runs the pose_tracking with the computer directories `pose_tracking_computer.py` which pulls the config with computer directories `config_computer.py`
+        - This uses the modified ExerciseController with no HR `ExerciseController_computer`
 
 ## General Troubleshooting
 

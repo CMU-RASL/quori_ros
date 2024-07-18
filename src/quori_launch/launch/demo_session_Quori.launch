@@ -1,0 +1,17 @@
+<launch>
+    <!-- <arg name="hardware" default="true" />
+    <include file="$(find quori_controller)/launch/quori_control_diff.launch">
+         <arg name="hardware" value="$(arg hardware)" />
+    </include> -->
+
+    <node pkg="quori_face_generator"
+         name="quori_face" type="simVectors_Quori.py" output="screen" />
+    
+    <node pkg="quori_controller"
+         name="quori_sound" type="quori_sound.py" output="screen" />
+
+    <include file="$(find astra_ros)/launch/default.launch" /> 
+
+    <node pkg="quori_exercises" name="pose_tracking" type="pose_tracking_Quori.py" output="screen" />
+
+</launch>

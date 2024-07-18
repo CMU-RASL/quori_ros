@@ -3,32 +3,28 @@ import rospy
 import rosbag
 import numpy as np
 import matplotlib.pyplot as plt
-from quori_ros.src.quori_exercises.exercise_session.config_computer import *
-from quori_ros.src.quori_exercises.exercise_session.ExerciseController_Quori import ExerciseController
+from config_computer import *
+from ExerciseController_computer import ExerciseController
 from datetime import datetime
 from pytz import timezone
 import logging
 import time
 import pickle
+from std_msgs.msg import Int32
 
 #Parameters
-MIN_LENGTH = 30
-MAX_LENGTH = 45
-SET_LENGTH = 40
-MAX_REPS = 10
-REST_TIME = 40
-#EXERCISE_LIST = ['bicep_curls'] #comment out before actual sessions
-EXERCISE_LIST = ['bicep_curls', 'bicep_curls', 'lateral_raises', 'lateral_raises']
+SET_LENGTH = 45
+# EXERCISE_LIST = ['bicep_curls'] #comment out before actual sessions
+EXERCISE_LIST = ['bicep_curls']
 
 #Change at beginning of study
-PARTICIPANT_ID = '11'
-RESTING_HR = 97
-AGE = 21
-
+PARTICIPANT_ID = '0'
+RESTING_HR = 68
+AGE = 67
 
 #Change at beginning of each round
-ROBOT_STYLE = 3#1 is firm, 3 is encouraging
-ROUND_NUM = 2
+ROBOT_STYLE = 3 #1 is firm, 3 is encouraging
+ROUND_NUM = 1
 
 MAX_HR = 220-AGE
 
@@ -36,8 +32,9 @@ VERBAL_CADENCE = 2 #1 is low, 2 is medium, 3 is high
 NONVERBAL_CADENCE = 2
 
 #Initialize ROS node
-rospy.init_node('study_session', anonymous=True)
+rospy.init_node('demo_session', anonymous=True)
 rate = rospy.Rate(10)
+set_pub = rospy.Publisher("set_performance", Int32, queue_size=10)
 
 #Start log file
 log_filename = 'Participant_{}_Style_{}_Round_{}_{}.log'.format(PARTICIPANT_ID, ROBOT_STYLE, ROUND_NUM, datetime.now().strftime("%Y-%m-%d--%H-%M-%S"))
@@ -47,37 +44,27 @@ data_filename = 'Participant_{}_Style_{}_Round_{}_{}.pickle'.format(PARTICIPANT_
 controller = ExerciseController(False, log_filename, ROBOT_STYLE, RESTING_HR, MAX_HR)
 rospy.sleep(2)
 
-if ROUND_NUM == 1:
-    robot_message = "We are going to start round 1 of the exercises now."
-    controller.message(robot_message)
-else:
-    robot_message = "We are going to start round 2 of the exercises now."
-    controller.message(robot_message)
-
 rospy.sleep(4)
+
+input("Press Enter to to start exercise session...")
 
 #For each exercise
 for set_num, exercise_name in enumerate(EXERCISE_LIST):
             
     #Start a new set
     controller.start_new_set(exercise_name, set_num+1, len(EXERCISE_LIST))
-
-    #Start set recording
-    if set_num == 0:
-        controller.message("Please choose the face that best shows the pain you are currently experiencing")
-    else:
-        controller.message("Please chooes the face that best shows your pain after resting")
-
-    inittime = datetime.now(timezone('EST'))
+    
     controller.logger.info('-------------------Recording!')
     start_message = False
     halfway_message = False
 
     #Lower arm all the way down
     controller.move_right_arm('halfway', 'sides')
-
+    
+    inittime = datetime.now(timezone('EST'))
+    
     #Stop between minimum and maximum time and minimum reps
-    while (datetime.now(timezone('EST')) - inittime).total_seconds() < MAX_LENGTH:        
+    while (datetime.now(timezone('EST')) - inittime).total_seconds() < SET_LENGTH:        
                 
         #Robot says starting set
         if not start_message:
@@ -102,34 +89,50 @@ for set_num, exercise_name in enumerate(EXERCISE_LIST):
     controller.message(robot_message)
     rospy.sleep(3)
 
+    #Calculate set-level performance
+    rep_performance = []
+    for f in controller.feedback[-1]:
+        if np.min(f['evaluation']) > 0:
+            rep_performance.append(1)
+        else:
+            rep_performance.append(0)
+
+    if len(rep_performance) == 0:
+        set_performance = 0
+        set_performance_explanation = 'Medium'
+    elif np.mean(rep_performance) > 0.6:
+        set_performance = 1
+        set_performance_explanation = 'Excellent'
+    else:
+        set_performance = 0
+        set_performance_explanation = 'Medium'
+    
+    set_pub.publish(set_performance)
+    controller.logger.info('|||||Rep performance: {}, Set performance: {}'.format(rep_performance, set_performance_explanation))
+
     robot_message = "Rest."
     controller.message(robot_message)
     controller.change_expression('smile', controller.start_set_smile, 4)
 
-    controller.message("Please choose the face that best shows your pain after that set")
-
-    rest_start = datetime.now(timezone('EST'))
-
     #Raise arm all the way up
     controller.move_right_arm('sides', 'up')
+    flag = False
+    while not flag:
+        User_inp = input('Press Enter to start next set...')
+        set_pub.publish(set_performance)
+        
+        if User_inp == 'g':
+            flag = False
+        else:
+            flag = True
+        time.sleep(1)
+    # input("Press Enter to to start next set...")
 
-    if set_num + 1 < len(EXERCISE_LIST):
-        halfway_message = False
-        while (datetime.now(timezone('EST')) - rest_start).total_seconds() < REST_TIME:
-            
-            #Print halfway done with rest here
-            if (datetime.now(timezone('EST')) - rest_start).total_seconds() > REST_TIME/2 and not halfway_message:
-                halfway_message = True
-                robot_message = "Rest for {} more seconds.".format(int(REST_TIME/2))
-                controller.message(robot_message)
-    else:
-        robot_message = "Round complete. Please fill out a survey about this round."
-        controller.message(robot_message)
-    
-# controller.plot_angles()
+# controller.message('You are all done with exercises today. Great job!')
+controller.change_expression('smile', controller.start_set_smile, 4)
 
 data = {'angles': controller.angles, 'peaks': controller.peaks, 'feedback': controller.feedback, 'times': controller.times, 'exercise_names': controller.exercise_name_list, 'all_hr': controller.all_heart_rates, 'heart_rates': controller.heart_rates, 'hrr': controller.hrr}
-dbfile = open('src/quori_exercises/saved_data/{}'.format(data_filename), 'ab')
+dbfile = open('/home/roshni/quori_files/quori_ros/src/quori_exercises/saved_data/{}'.format(data_filename), 'ab')
 
 pickle.dump(data, dbfile)                    
 dbfile.close()

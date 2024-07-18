@@ -1,0 +1,6 @@
+<launch>
+    <node pkg="quori_exercises" name ="pose_tracking" type="pose_tracking_computer.py" output="screen" />
+
+    <node pkg="quori_exercises" name ="demo_session" type="demo_session.py" output="screen" />
+    
+</launch>

@@ -5,7 +5,7 @@ from pytz import timezone
 from datetime import datetime
 import numpy as np
 from sensor_msgs.msg import Image
-from quori_ros.src.quori_exercises.exercise_session.config_Quori import *
+from quori_ros.src.quori_exercises.exercise_session.config_computer import *
 import cv2
 
 import warnings
@@ -21,7 +21,7 @@ class PoseTracking:
         self.sub = rospy.Subscriber("/astra_ros/devices/default/color/image_color", Image, self.callback)
         
         self.landmark_points = ['nose', 'left_eye_inner', 'left_eye', 'left_eye_outer', 'right_eye_inner', 'right_eye', 'right_eye_outer', 'left_ear', 'right_ear', 'mouth_left', 'mouth_right', 'left_shoulder', 'right_shoulder', 'left_elbow', 'right_elbow', 'left_wrist', 'right_wrist', 'left_pinky', 'right_pinky', 'left_index', 'right_index', 'left_thumb', 'right_thumb', 'left_hip', 'right_hip', 'left_knee', 'right_knee', 'left_ankle', 'right_ankle', 'left_heel', 'right_heel', 'left_foot_index', 'right_foot_index']
-        base_options = python.BaseOptions(model_asset_path='/home/quori4/quori_files/quori_ros/src/quori_exercises/exercise_session/pose_landmarker.task')
+        base_options = python.BaseOptions(model_asset_path='/home/roshni/quori_files/quori_ros/src/quori_exercises/exercise_session/pose_landmarker.task')
         options = vision.PoseLandmarkerOptions(
             base_options=base_options,
             output_segmentation_masks=False)

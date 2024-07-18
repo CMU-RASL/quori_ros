@@ -1,0 +1,12 @@
+<launch>
+    <remap from="/usb_cam/image_raw" to="/astra_ros/devices/default/color/image_color" />
+    <!--Use video2 for the webcam and video0 for integrated camera-->
+    <node pkg="usb_cam" name="usb_cam" type="usb_cam_node">
+        <param name="video_device" type="string" value="/dev/video2" />
+    </node>
+    
+    <node pkg="quori_face_generator" name="quori_face" type="simVectors_computer_demo.py" output="screen" />
+     
+    <node pkg="quori_controller" name="quori_sound" type="quori_sound.py" output="screen" />
+    
+</launch>
