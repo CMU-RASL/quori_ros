@@ -11,6 +11,7 @@ import logging
 import time
 import pickle
 from std_msgs.msg import Int32
+from pynput import keyboard
 
 #Parameters
 SET_LENGTH = 45
@@ -116,17 +117,21 @@ for set_num, exercise_name in enumerate(EXERCISE_LIST):
 
     #Raise arm all the way up
     controller.move_right_arm('sides', 'up')
-    flag = False
-    while not flag:
-        User_inp = input('Press Enter to start next set...')
-        set_pub.publish(set_performance)
-        
-        if User_inp == 'g':
-            flag = False
-        else:
-            flag = True
-        time.sleep(1)
-    # input("Press Enter to to start next set...")
+
+    def on_press(key):
+        try:
+            if key == keyboard.Key.enter:
+                return False
+        except AttributeError:
+            pass
+    
+    with keyboard.Listener(on_press=on_press) as listener:
+        for _ in range(100):
+            set_pub.publish(set_performance)
+            print('Press enter to start next set, Publishing set performance {}'.format(set_performance))
+            time.sleep(1)
+            if not listener.running:
+                break
 
 # controller.message('You are all done with exercises today. Great job!')
 controller.change_expression('smile', controller.start_set_smile, 4)

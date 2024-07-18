@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 from pytz import timezone
 import time
 import logging
-from quori_ros.src.quori_exercises.exercise_session.config_Quori import *
+from config_Quori import *
 import sys
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 import syllables
