@@ -1,0 +1,765 @@
+{
+    "low_range left side": {
+        "very firm": [
+            "Focus on raising the left arm higher next time.",
+            "Focus on improving left side range of motion.",
+            "Focus on left side form, aim for full range.",
+            "Improve left side range, match right side form.",
+            "Maintain proper form on both sides for full benefit."
+        ],
+        "firm": [
+            "Focus on improving the range on the left side.",
+            "Focus on a full range of motion on the left side.",
+            "Focus on a complete range of motion on the left side."   
+        ],
+        "neutral": [
+            "Focus on improving the range on your left side.",
+            "Focus on improving left side range of motion. Keep going.",
+            "Focus on maintaining equal range of motion on both sides.",
+            "Focus on improving the left side range of motion next.",
+            "Focus on maintaining even range of motion on both sides."
+        ],
+        "encouraging": [
+            "Nice work! Focus on improving the range of motion on your left side.",
+            "Great effort! Let's focus on a full range of motion."
+        ],
+        "very encouraging": [
+            "Awesome job! Let's focus on full range next time.",
+            "Fantastic job! Let's aim for even more height next time!",
+            "Amazing effort! Let's aim for even smoother movements next time!",
+            "Great job pushing through! Let's aim for full range next time.",
+            "Awesome work! Let's aim for a higher left side next."
+        ]
+    },
+    "low_range right side": {
+        "very firm": [
+            "Focus on full range of motion on right side.",
+            "Focus on improving the range on your right side.",
+            "Focus on improving the right side's range of motion.",
+            "Concentrate on improving the range on your right side.",
+            "Focus on improving the range on the right side."
+        ],
+        "firm": [
+            "Focus on improving your range on the right side.",
+            "Focus on increasing the range on your right side.",
+            "Focus on improving the range of motion on the right side."
+        ],
+        "neutral": [
+            "Focus on improving the range on the right side.",
+            "Focus on improving the range on the right side.",
+            "Focus on improving the range on your right side.",
+            "Focus on improving the range of motion on the right side.",
+            "Let's focus on improving the right side's range of motion."
+        ],
+        "encouraging": [
+            "Good job! Focus on improving the right side's range.",
+            "Great job on the left side, let's match it on right!",
+            "Great job, focus on improving the right side range next time!"
+        ],
+        "very encouraging": [
+            "Amazing job! Let's aim for full range next time.",
+            "You're smashing it! Let's boost that right side reach!",
+            "You're smashing it! Let's aim for even higher next time!",
+            "Amazing job! Let's focus on the right side now.",
+            "Great job! Let's push a little more on the right side!"
+        ]
+    },
+    "low_range both sides": {
+        "very firm": [
+            "Focus on improving range of motion for stronger results.",
+            "Focus on improving your range of motion for better results.",
+            "You can do better with your range of motion.",
+            "Focus on maintaining full range of motion next time.",
+            "Focus on maintaining full range of motion on both sides."
+        ],
+        "firm": [
+            "Focus on raising your arms to 90 degrees.",
+            "Focus on a full range of motion for each repetition."
+        ],
+        "neutral": [
+            "Focus on increasing the range of motion for the next set.",
+            "Focus on maintaining a consistent range of motion.",
+            "Focus on a fuller range of motion for better results.",
+            "Focus on maintaining a full range of motion next time.",
+            "Focus on improving the range of motion on both sides."
+        ],
+        "encouraging": [
+            "Great work! Focus on raising your arms to 90 degrees.",
+            "You've got this! Can you focus on raising your arms to 90 degrees.",
+            "Focus on a full range of motion, you're doing great!"
+        ],
+        "very encouraging": [
+            "You're doing fantastic! Let's reach a bit higher next time!",
+            "You've got this! Let's reach for a wider range!",
+            "You're doing fantastic! Let's aim for more range next time!",
+            "Awesome job! Let's aim for bigger lifts next time!",
+            "Fantastic effort! Let's aim for a fuller range next time!"
+        ]
+    },
+    "bad left side": {
+        "very firm": [
+            "Focus on form for both sides, maintain control.",
+            "Focus on proper form on the left side.",
+            "Focus on maintaining proper form for both sides next time.",
+            "Focus on improving form on your left side.",
+            "Focus on proper form on the left side."
+        ],
+        "firm": [
+            "Make sure your left arm goes to 90 degrees.",
+            "Make sure your left elbow is mostly straight."
+        ],
+        "neutral": [
+            "Focus on maintaining symmetry in both sides for balance.",
+            "Focus on keeping both sides in good form.",
+            "Focus on maintaining even form on both sides.",
+            "Focus on maintaining consistent form on both sides.",
+            "Focus on maintaining proper form on both sides next time."
+        ],
+        "encouraging": [
+            "Great job on the right side, can you pay a little more attention to your left arm?",
+            "You're doing great, can you focus a little more on your left side?"
+        ],
+        "very encouraging": [
+            "Fantastic job on the right side, keep that form consistent!",
+            "Fantastic job! Let's focus on form on the left.",
+            "Awesome work on the right side! Let's match the left!",
+            "Fantastic energy! Let's focus on form for next set.",
+            "Great job pushing through! Remember to engage both sides equally."
+        ]
+    },
+    "bad right side": {
+        "very firm": [
+            "Focus on maintaining proper form on the right side.",
+            "Focus on improving the form on your right side.",
+            "Focus on maintaining proper form on the right side.",
+            "Focus on maintaining proper form on the right side.",
+            "Focus on correcting the form on your right side."
+        ],
+        "firm": [
+            "Make sure your right arm goes to 90 degrees.",
+            "Make sure your right elbow is mostly straight."
+        ],
+        "neutral": [
+            "Focus on maintaining symmetry in your lateral raises.",
+            "Focus on maintaining proper form on both sides next time.",
+            "Focus on maintaining proper form on both sides.",
+            "Focus on maintaining consistent form on both sides.",
+            "Focus on equal form on both sides for better results."
+        ],
+        "encouraging": [
+            "Great job on the left side, can you pay a little more attention to your right arm?",
+            "You're doing great, can you focus a little more on your right side?"
+        ],
+        "very encouraging": [
+            "Great job! Let's focus on improving the right side.",
+            "Great job on the left side, let's nail the right!",
+            "You're crushing it! Let's make that right side match.",
+            "You're crushing it! Just a bit more focus, you've got this!",
+            "Fantastic job on the left side\u2014let's match that energy!"
+        ]
+    },
+    "bad both sides": {
+        "very firm": [
+            "Focus on maintaining proper form for shoulder protection.",
+            "Focus on maintaining proper form for better results.",
+            "Focus on form for better results.",
+            "Focus on maintaining proper form for effective lateral raises.",
+            "Maintain proper form on both sides, focus on technique."
+        ],
+        "firm": [
+            "Make sure your arms go to 90 degrees.",
+            "Focus on raising your arms to 90 degrees."
+        ],
+        "neutral": [
+            "Focus on maintaining proper form on both sides next time.",
+            "Focus on form to avoid injury and maximize effectiveness.",
+            "Focus on maintaining proper form on your lateral raises.",
+            "Focus on maintaining proper form to prevent injury.",
+            "Focus on maintaining proper form on both sides."
+        ],
+        "encouraging": [
+            "Great work, make sure your arms extend all the way to 90 degrees!",
+            "Great job, keep focusing!",
+            "You're doing great, can you focus on extending your arms to 90 degrees?"
+        ],
+        "very encouraging": [
+            "Great job pushing through! Let's focus on form.",
+            "You're doing fantastic! Let's nail those lateral raises!",
+            "Great job pushing through, keep that energy up!",
+            "Great job with those lateral raises! Keep it up!",
+            "Awesome job! Let's aim for perfect form next time!"
+        ]
+    },
+    "corrected low_range left side": {
+        "very firm": [
+            "Focus on full range of motion on left side.",
+            "Focus on maintaining full range of motion on both sides.",
+            "Focus on full range of motion for left side.",
+            "Focus on full range of motion on the left side.",
+            "Focus on improving that range of motion on your left side."
+        ],
+        "firm": [
+            "Left side is looking good, keep pushing",
+	        "Form on your left side is good"
+        ],
+        "neutral": [
+            "Focus on maintaining consistent range of motion on both sides.",
+            "Focus on maintaining consistent range of motion on both sides.",
+            "Focus on maintaining consistent range of motion on both sides.",
+            "Focus on maintaining even range of motion on both sides.",
+            "Focus on maintaining equal range of motion on both sides."
+        ],
+        "encouraging": [
+            "Left side is looking great, well done!",
+            "Maintain that excellent form!",
+            "Range of motion is looking good! Great job!"
+        ],
+        "very encouraging": [
+            "Fantastic job! Let's keep that energy up!",
+            "Fantastic job correcting that mistake! Keep up the great work!",
+            "Awesome job correcting the range! Keep up the energy!",
+            "You're on fire! Corrected form, excellent energy!",
+            "Awesome job correcting your range, keep up the good work!"
+        ]
+    },
+    "corrected low_range right side": {
+        "very firm": [
+            "Focus on full range of motion for better results.",
+            "Focus on maintaining full range of motion on both sides.",
+            "Focus on full range of motion, maintain form.",
+            "Focus on full range, maintain proper form on right side.",
+            "Focus on full range of motion for best results."
+        ],
+        "firm": [
+            "Right side is looking good, keep it up",
+	        "Form on your right side is good"
+        ],
+        "neutral": [
+            "Ensure both sides maintain the same range of motion.",
+            "Focus on maintaining consistent range of motion on both sides.",
+            "Focus on maintaining consistent range of motion on both sides.",
+            "Focus on maintaining consistent range of motion on both sides.",
+            "Focus on maintaining consistent range on both sides."
+        ],
+        "encouraging": [
+            "Right side is looking great, well done!",
+            "Maintain that excellent form!",
+            "Range of motion is looking good! Great job!"
+        ],
+        "very encouraging": [
+            "You're killing it! Let's keep those lateral raises strong!",
+            "Awesome work! Keep those lateral raises strong and controlled!",
+            "You're doing amazing! Let's keep that energy up!",
+            "You're killing it! Let's aim for even more range!",
+            "Amazing job! Let's continue with that energy!"
+        ]
+    },
+    "corrected low_range both sides": {
+        "very firm": [
+            "Focus on maintaining the full range of motion in each rep.",
+            "Focus on maintaining full range throughout each repetition.",
+            "Focus on maintaining full range of motion on each side.",
+            "Focus on maintaining full range of motion on both sides.",
+            "Focus on full range of motion for each repetition."
+        ],
+        "firm": [
+            "Form is looking good, keep pushing",
+	        "Both sides are looking good"
+        ],
+        "neutral": [
+            "Focus on maintaining consistent range of motion on both sides.",
+            "Focus on maintaining consistent range of motion on both sides.",
+            "Focus on maintaining consistent range of motion on both sides.",
+            "Focus on maintaining a consistent range of motion.",
+            "Focus on maintaining consistent range of motion on each side."
+        ],
+        "encouraging": [
+            "Keep up the good work, form is looking great!",
+            "You're doing fantastic, keep up the good work!",
+            "Range of motion is looking great! Keep it up!"
+        ],
+        "very encouraging": [
+            "Amazing work! Let's keep those lateral raises going strong!",
+            "You're crushing it! Keep those lateral raises strong!",
+            "Amazing work! Let's keep that energy up!",
+            "Fantastic job on those lateral raises, keep up the energy!",
+            "Fantastic job on those lateral raises! Keep up the energy!"
+        ]
+    },
+    "corrected bad right side": {
+        "very firm": [
+            "Focus on keeping your left arm straight during the raises.",
+            "Fix form, maintain control during lateral raises.",
+            "Focus on keeping both arms at the same level.",
+            "Focus on engaging the left shoulder more for proper form.",
+            "Focus on keeping both arms at the same level."
+        ],
+        "firm": [
+            "Right side is looking good, keep going",
+	        "Form on your right side looks good"
+        ],
+        "neutral": [
+            "Focus on maintaining proper form during each repetition.",
+            "Focus on maintaining proper form on both sides.",
+            "Focus on maintaining proper form on both sides.",
+            "Focus on maintaining proper form on both sides.",
+            "Focus on maintaining proper form on both sides."
+        ],
+        "encouraging": [
+            "Nice job! Your form is looking great.",
+            "Great job, keep up the good work!"
+        ],
+        "very encouraging": [
+            "Fantastic job on those lateral raises, keep up the energy!",
+            "Fantastic job catching and correcting that mistake! You rock!",
+            "Fantastic job correcting your form on the left side!",
+            "Fantastic job on those lateral raises! Keep up the energy!",
+            "Amazing job on correcting the form, keep up the energy!"
+        ]
+    },
+    "corrected bad left side": {
+        "very firm": [
+            "Focus on the full range of motion.",
+            "Focus on maintaining proper form throughout the entire movement.",
+            "Focus on maintaining proper form for both sides.",
+            "Focus on maintaining proper form throughout the entire set.",
+            "Focus on full range of motion, avoid swinging."
+        ],
+        "firm": [
+            "Left side is looking good, keep pushing",
+	        "Form on your left side looks good"
+        ],
+        "neutral": [
+            "Focus on keeping both sides aligned for better form.",
+            "Focus on maintaining proper form on both sides evenly.",
+            "Focus on maintaining proper form on both sides.",
+            "Focus on maintaining proper form on both sides.",
+            "Focus on balancing the movement on both sides evenly."
+        ],
+        "encouraging": [
+            "Nice job! Your form is looking great.",
+            "Great job, keep up the good work!"
+        ],
+        "very encouraging": [
+            "Amazing job! Your form is looking fantastic today!",
+            "You corrected the form perfectly! Keep up the fantastic work!",
+            "Fantastic job! Your form is looking much better now!",
+            "Fantastic job with those lateral raises! Keep up the energy!",
+            "Fantastic job! Your form is perfect today."
+        ]
+    },
+    "corrected bad both sides": {
+        "very firm": [
+            "Focus on keeping your elbows slightly bent for proper form.",
+            "Focus on keeping your arms straight throughout the movement.",
+            "Focus on keeping your elbows slightly bent for better form.",
+            "Focus on proper form, engage core for stability.",
+            "Focus on maintaining proper form on both sides."
+        ],
+        "firm": [
+            "Form looks good, keep it up",
+	        "Your form is correct"
+        ],
+        "neutral": [
+            "Focus on maintaining proper form for optimal shoulder engagement.",
+            "Focus on maintaining proper form throughout the movement.",
+            "Focus on maintaining proper form for better results.",
+            "Focus on maintaining proper form throughout the exercise.",
+            "Focus on maintaining proper form throughout the movement."
+        ],
+        "encouraging": [
+            "Nice job! Your form is looking great.",
+            "Great job, keep up the good work!"
+        ],
+        "very encouraging": [
+            "Fantastic work! Let's keep that excellent form going!",
+            "Great job correcting your form, you're crushing it!",
+            "Fantastic job! Keep up the amazing work!",
+            "Fantastic form! You're on fire today!",
+            "Fantastic work! Your form is improving with each rep!"
+        ]
+    },
+    "good form": {
+        "very firm": [
+            "Focus on maintaining proper form throughout each repetition.",
+            "Focus on maintaining proper form throughout the entire movement.",
+            "Focus on controlled movement to maintain good form throughout.",
+            "Focus on stabilizing your core for better control.",
+            "Focus on maintaining proper form to prevent injury."
+        ],
+        "firm": [
+            "Form is good, keep going",
+            "Your form looks good, keep pushing"
+        ],
+        "neutral": [
+            "Maintain proper form to prevent injury.",
+            "Maintain consistent form for optimal results.",
+            "Maintain control of your movement, focus on form.",
+            "Maintain consistent form for best results.",
+            "Maintain consistent form throughout all repetitions."
+        ],
+        "encouraging": [
+            "You're looking strong and focused!",
+            "Well done! Your form is looking great!",
+            "You're crushing it!",
+            "You're doing fantastic!",
+            "Fantastic job on those lateral raises!"
+        ],
+        "very encouraging": [
+            "Fantastic job on those lateral raises! Keep up the energy!",
+            "You're crushing those lateral raises! Keep that energy up!",
+            "You're crushing it! Let's aim for higher reps next time!",
+            "You're crushing those lateral raises! Keep up the excellent work!",
+            "You're killing it! Your last rep was perfect!"
+        ]
+    },
+    "high_range left side": {
+        "very firm": [
+            "Maintain control and focus on maintaining proper form.",
+            "Control the range of motion on the left side.",
+            "Control the range of motion, maintain form on left side.",
+            "Control the range of motion to prevent overextension.",
+            "Focus on maintaining proper form, reduce excess range of motion."
+        ],
+        "firm": [
+            "Focus on raising your left arm to 90 degrees.",
+            "Make sure your left arm stops at 90 degrees."
+        ],
+        "neutral": [
+            "Focus on maintaining consistent range of motion.",
+            "Maintain consistent range of motion on both sides.",
+            "Focus on maintaining consistent range of motion on both sides.",
+            "Try to maintain consistent range of motion on both sides.",
+            "Focus on maintaining consistent range of motion on both sides."
+        ],
+        "encouraging": [
+            "Nice work! Focus on stopping your left arm at 90 degrees",
+            "Great job! Let's focus on raising your left arm to 90 degrees."
+        ],
+        "very encouraging": [
+            "Amazing effort! Let's focus on technique for next rep.",
+            "Amazing effort! Let's aim for perfect form next time!",
+            "Amazing effort! Let's keep that energy up!",
+            "You're doing fantastic! Let's aim for even more control.",
+            "Fantastic job on that last rep, keep up the energy!"
+        ]
+    },
+    "high_range right side": {
+        "very firm": [
+            "Control the range of motion on your right side better.",
+            "Focus on maintaining proper form, avoid overextending the right side.",
+            "Focus on maintaining proper range of motion next time.",
+            "Control the range of motion on the right side better.",
+            "Control your range of motion for better form."
+        ],
+        "firm": [
+            "Focus on raising your right arm to 90 degrees.",
+            "Make sure your right arm stops at 90 degrees."
+        ],
+        "neutral": [
+            "Focus on maintaining consistent range of motion next time.",
+            "Focus on maintaining consistent range of motion on both sides.",
+            "Maintain consistent range of motion on both sides.",
+            "Focus on maintaining consistent range of motion on both sides.",
+            "Focus on maintaining a consistent range of motion."
+        ],
+        "encouraging": [
+            "Nice work! Focus on stopping your right arm at 90 degrees",
+            "Great job! Let's focus on raising your right arm to 90 degrees."
+        ],
+        "very encouraging": [
+            "You're crushing it! Let's focus on perfect form next time.",
+            "Awesome job pushing through! Keep that energy up!",
+            "Amazing work! Push through with consistent form, you're unstoppable!",
+            "Amazing job! Let's aim for even higher next time!",
+            "Amazing job on that last repetition! Keep pushing yourself!"
+        ]
+    },
+    "high_range both sides": {
+        "very firm": [
+            "Control the range to avoid overextension.",
+            "Control your range of motion for better form.",
+            "Control your range to prevent overexertion.",
+            "Control your range of motion for proper form.",
+            "Control your range of motion to avoid overextension."
+        ],
+        "firm": [
+            "Focus on raising your arms to 90 degrees.",
+            "Make sure your arms stop at 90 degrees."
+        ],
+        "neutral": [
+            "Focus on maintaining consistent range of motion next time.",
+            "Focus on maintaining a consistent range of motion.",
+            "Focus on maintaining a controlled range of motion next time.",
+            "Focus on maintaining consistent range of motion on both sides.",
+            "Focus on maintaining a controlled range of motion next time."
+        ],
+        "encouraging": [
+            "Nice work! Focus on stopping your arms at 90 degrees",
+            "Great job! Let's focus on raising your arms to 90 degrees."
+        ],
+        "very encouraging": [
+            "Fantastic job with those lateral raises! Keep up the energy!",
+            "Amazing energy! Let's maintain control for perfect form!",
+            "Fantastic job with those lateral raises, keep up the energy!",
+            "You're doing amazing! Keep up the fantastic work!",
+            "Amazing effort! Let's go for even better form next time!"
+        ]
+    },
+    "corrected high_range left side": {
+        "very firm": [
+            "Focus on maintaining proper form for better results.",
+            "Focus on maintaining correct range of motion on both sides.",
+            "Engage core for stability during lateral raises.",
+            "Focus on keeping both sides at the same range.",
+            "Focus on maintaining proper range on both sides."
+        ],
+        "firm": [
+            "Left side is looking good, keep it up",
+	        "Form on your left side is good"
+        ],
+        "neutral": [
+            "Focus on maintaining equal range of motion on both sides.",
+            "Focus on maintaining consistent range of motion on both sides.",
+            "Focus on maintaining consistent range of motion on both sides.",
+            "Focus on maintaining balanced range on both sides.",
+            "Maintain consistent range of motion on both sides."
+        ],
+        "encouraging": [
+            "Left side is looking great, well done!",
+            "Maintain that excellent form!",
+            "Range of motion is looking good! Great job!"
+        ],
+        "very encouraging": [
+            "Amazing progress! Let's aim for balance on both sides.",
+            "Fantastic job on that correction, keep up the positive energy!",
+            "Amazing job correcting the range of motion, keep it up!",
+            "Fantastic job! Let's aim for consistent form next time.",
+            "You're crushing it! Keep up the amazing energy!"
+        ]
+    },
+    "corrected high_range right side": {
+        "very firm": [
+            "Focus on maintaining equal range of motion on both sides.",
+            "Focus on maintaining equal range of motion on both sides.",
+            "Focus on maintaining proper form with controlled movements.",
+            "Maintain proper form to prevent injury.",
+            "Focus on maintaining proper form for both sides."
+        ],
+        "firm": [
+            "Right side is looking good, keep pushing",
+	        "Form on your right side is good"
+        ],
+        "neutral": [
+            "Balance both sides for consistency in the next reps.",
+            "Focus on keeping both sides equal for better balance.",
+            "Maintain good form and balance on both sides.",
+            "Focus on maintaining balanced range of motion on both sides.",
+            "Focus on maintaining equal range on both sides."
+        ],
+        "encouraging": [
+            "Right side is looking great, well done!",
+            "Maintain that excellent form!",
+            "Range of motion is looking good! Great job!"
+        ],
+        "very encouraging": [
+            "Amazing job on those lateral raises! Keep up the energy!",
+            "Awesome job! Keep up the amazing work!",
+            "Awesome job! Keep that energy up!",
+            "Fantastic job maintaining proper range of motion! Keep it up!",
+            "Incredible job! Keep that energy up, you're killing it!"
+        ]
+    },
+    "corrected high_range both sides": {
+        "very firm": [
+            "Focus on maintaining proper form for better results.",
+            "Maintain proper form to prevent injury.",
+            "Maintain proper form and control throughout each repetition.",
+            "Maintain proper form to prevent injury.",
+            "Control your range of motion for better form."
+        ],
+        "firm": [
+            "Form is looking good, keep going",
+	        "Both sides are looking good"
+        ],
+        "neutral": [
+            "Maintain consistent range of motion on both sides.",
+            "Focus on maintaining consistent range of motion on both sides.",
+            "Maintain consistent range of motion on both sides.",
+            "Focus on maintaining consistent range of motion on both sides.",
+            "Keep the range consistent on both sides for balance."
+        ],
+        "encouraging": [
+            "Your form is looking great!",
+            "You're doing fantastic!",
+            "Range of motion is looking great!"
+        ],
+        "very encouraging": [
+            "Fantastic job with those lateral raises! Keep up the energy!",
+            "Awesome job adjusting for better range of motion!",
+            "You're crushing those lateral raises with incredible form!",
+            "Amazing job! Keep up the fantastic energy and form!",
+            "Fantastic job! You're making excellent progress, keep it up!"
+        ]
+    },
+    "fast": {
+        "very firm": [
+            "Speed up the lateral raises for better form.",
+            "Focus on maintaining a steady tempo throughout the exercise.",
+            "Pick up the pace for better results on the raise.",
+            "Speed up the next repetition to maintain proper form.",
+            "Pick up the pace for better form."
+        ],
+        "firm": [
+            "Maintain a steady pace throughout each repetition.",
+            "Focus on maintaining a consistent speed."
+        ],
+        "neutral": [
+            "Maintain a consistent pace to prevent slower repetitions.",
+            "Maintain a consistent pace for optimal form.",
+            "Maintain a consistent speed throughout each repetition.",
+            "Maintain a consistent speed for better form.",
+            "Maintain a consistent speed throughout all repetitions."
+        ],
+        "encouraging": [
+            "You're strong! Let's maintain a steady pace throughout.",
+            "You're doing great, let's maintain a steady pace!"
+        ],
+        "very encouraging": [
+            "Amazing work! Let's maintain that strong pace!",
+            "Amazing work! Let's aim for a more controlled movement.",
+            "Fantastic effort! Let's keep those lateral raises going strong!",
+            "You're doing amazing, keep up the good work!",
+            "You're doing fantastic, keep up the amazing work!"
+        ]
+    },
+    "slow": {
+        "very firm": [
+            "Control the speed, focus on form for better results.",
+            "Slow down the pace to maintain control and prevent injury.",
+            "Control the speed to ensure proper form throughout.",
+            "Control the movement, avoid swinging the arms next time.",
+            "Control your speed, maintain proper form throughout."
+        ],
+        "firm": [
+            "Pick up the pace for the next few.",
+	        "Focus on maintaining a steady pace",
+	        "Maintain your pace throughout"
+        ],
+        "neutral": [
+            "Maintain a consistent speed for proper form and control.",
+            "Maintain a consistent pace for effective progress.",
+            "Maintain control and focus on form for better execution.",
+            "Maintain a consistent pace throughout the exercise.",
+            "Maintain controlled pace for effective workout and safety."
+        ],
+        "encouraging": [
+            "Nice work, can you pick it up for the next few?",
+            "Nice job on those bicep curls, keep up the pace!"
+        ],
+        "very encouraging": [
+            "Fantastic job! Let's maintain consistency in the next reps.",
+            "You're rocking those lateral raises! Keep up the energy!",
+            "You're doing fantastic! Keep up the wonderful work!",
+            "Amazing effort! Let's maintain good form next time.",
+            "Fantastic job on those lateral raises, keep up the energy!"
+        ]
+    },
+    "corrected fast": {
+        "very firm": [
+            "Control the speed to maintain proper form.",
+            "Control the pace for better form and muscle engagement.",
+            "Slow down the movement to maintain control and form.",
+            "Control the movement and maintain a steady pace.",
+            "Control the pace, maintain form throughout the movement."
+        ],
+        "firm": [
+            "Your pace is good, keep it up",
+	        "Pace is looking good."
+        ],
+        "neutral": [
+            "Maintain a controlled pace for better muscle engagement.",
+            "Maintain a controlled pace for better form.",
+            "Maintain a controlled pace throughout the lateral raises.",
+            "Focus on maintaining a consistent pace throughout the exercise.",
+            "Maintain a steady pace for better control and form."
+        ],
+        "encouraging": [
+            "You're doing great, pace looks good!",
+            "Speed is looking great!",
+            "Awesome job!"
+        ],
+        "very encouraging": [
+            "Fantastic job on those lateral raises! You're a rockstar!",
+            "Fantastic job! Keep up the amazing work!",
+            "Awesome job! Maintain that controlled pace with each rep.",
+            "Fantastic job on that correction - keep shining bright!",
+            "Fantastic job maintaining control and focus throughout the exercise!"
+        ]
+    },
+    "corrected slow": {
+        "very firm": [
+            "Speed up the movement to maintain proper form.",
+            "Speed up the movement for better form.",
+            "Speed up the movement for better shoulder engagement.",
+            "Speed up the movement to maintain proper form.",
+            "Increase the speed of your lateral raises for efficiency."
+        ],
+        "firm": [
+            "Your pace is good, keep pushing",
+	        "Pace is looking good."
+        ],
+        "neutral": [
+            "Focus on maintaining a consistent speed throughout the movement.",
+            "Remember to maintain a steady pace throughout the exercise.",
+            "Maintain a consistent speed throughout the movement.",
+            "Maintain a steady pace throughout the lateral raises.",
+            "Maintain a consistent pace throughout the lateral raises."
+        ],
+        "encouraging": [
+            "You're doing great, pace looks good!",
+            "Speed is looking great!",
+            "Awesome job!"
+        ],
+        "very encouraging": [
+            "Amazing job with those lateral raises! You're unstoppable today!",
+            "You're really crushing these lateral raises, keep it up!",
+            "Amazing job! Keep up the fantastic work!",
+            "You're crushing it! Let's keep that energy up!",
+            "Amazing work! Let's keep up the fantastic effort!"
+        ]
+    },
+    "good speed": {
+        "very firm": [
+            "Focus on maintaining proper form throughout each repetition.",
+            "Focus on maintaining proper form throughout all repetitions.",
+            "Maintain proper form for optimal results.",
+            "Focus on maintaining proper form throughout the entire set.",
+            "Focus on keeping your upper body stable throughout."
+        ],
+        "firm": [
+            "Your pace is good, keep going",
+	        "Pace is looking good."
+        ],
+        "neutral": [
+            "Maintain proper form to prevent injury.",
+            "Maintain proper form to prevent shoulder strain.",
+            "Maintain consistent form to avoid shoulder strain.",
+            "Maintain good form as you continue lateral raises.",
+            "Maintain the current form as you continue with the exercise."
+        ],
+        "encouraging": [
+            "Well done! Your speed is really good today.",
+            "You're doing great, speed looks great!",
+            "Excellent job! Pace looks great!",
+            "You're looking strong and focused!"  
+        ],
+        "very encouraging": [
+            "You're crushing those lateral raises! Keep up the fantastic work!",
+            "You're crushing those lateral raises! Keep up the fantastic work!",
+            "Amazing job! Your lateral raises are looking strong!",
+            "Way to go! You're crushing those lateral raises!",
+            "You're killing it! Keep those lateral raises going strong!"
+        ]
+    }
+}

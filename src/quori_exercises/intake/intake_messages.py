@@ -24,9 +24,8 @@ INTAKE_MESSAGES = {
     'Consent':{
 
         'Start consent form':
-            ['Before we begin, I need to ask you some basic information and go over the consent form in front of you. Please take a minute to read through the form. Please write your name when you are done.'],
+            ['Before we begin, I need to ask you some basic information and go over the consent form next to you. Please take a minute to read through the form. Please write your name when you are done and let me know'],
 
-       
       
         'Part 2':
             ['Please read the block below your signature and choose one of the three options.'],
@@ -38,7 +37,7 @@ INTAKE_MESSAGES = {
        'Explanation':
             ['As a recap  you will be completing a series of exercises and I will be evaluating you on your performance. \
              I will be recording your video and audio during the session. I will also be asking you questions about your experience. \
-             I will be using this information to improve my coaching skills. If you have any questions my assistant can answer them for you.'],
+             I will be using this information to improve my coaching skills.'],
 
         'Time':
             ['Let me know if you are done or need more time.']
@@ -47,15 +46,21 @@ INTAKE_MESSAGES = {
     'Evaluation':{
         'Begin evaluation':
             ['Before I explain the exercises, I would like to ask you a few questions.'],
-        
+            
+        'Age':
+            ['How old are you?'],
+            
         "Enjoy?":
-            ['Do you enjoy exercising?'],
+            ['Is exercise just something that needs to be done or something that you choose to do'],
         
         "Why?":
-            ['Why do you exercise?'],
+            ['Do you feel like someone else is making you exercise, such as your doctor or a family member?'],
 
         'Energy Level':
             ['On a scale of 1 to 10, how would you rate your energy level today?'],
+
+        'Pain Level':
+            ['Please look at the sheet next to you showing the faces. On a scale of 0 to 10, how would you rate your pain level right now?'],
         
         'Thank you':
             ['Thank you for answering the questions. I will now explain the exercises.'],
@@ -67,14 +72,11 @@ INTAKE_MESSAGES = {
     'Exercise explanation': {
              
         'Explain exercise routine':
-            ['You will perform two rounds with 4 sets each. The first two sets will be bicep curls and the next two are lateral raises.In between each set there will be a rest period. Please look at the screen in front of you to see how to perform the exercises.'],
+            ['You will perform two rounds with 4 sets each. The first two sets will be bicep curls and the next two are lateral raises. Each set will be for 40 seconds. Please do the exercises at your own pace. In between each set there will be a rest period. Please look at the screen next to you to see how to perform the exercises.'],
              
         
-        'Dumbbells':
-            ['We have some dumbbells here for you to use if you choose to.'],
-        
         'Questions':
-            ['Do you have any questions about the exercises or the routine? My assistant can help you with any questions you have.'],
+            ['Do you have any questions about the exercises or the routine? '],
 
         
         'Demo explanation':
