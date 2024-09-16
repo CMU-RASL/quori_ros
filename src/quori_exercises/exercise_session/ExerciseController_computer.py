@@ -13,12 +13,13 @@ import time
 import logging
 from config_computer import *
 import sys
+
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 import syllables
 
 class ExerciseController:
 
-    def __init__(self, replay, log_filename, style, resting_hr, max_hr):
+    def __init__(self, replay, log_filename, style, resting_hr, max_hr, user_id):
 
         #Set initial parameters
         self.replay = replay
@@ -32,6 +33,13 @@ class ExerciseController:
 
         #Robot style 0 - very firm, 1 - firm, 2 - neutral, 3 - encouraging, 4 - very encouraging
         self.update_robot_style(style)
+        if style == 5: #adaptive
+            self.adaptive = True
+            self.adaptive_data_filename = 'adaptive_data/Participant_{}_{}.txt'.format(user_id, datetime.now().strftime("%Y-%m-%d"))
+            self.adaptive_action_filename = 'adaptive_data/Participant_{}_{}_actions.txt'.format(user_id, datetime.now().strftime("%Y-%m-%d"))
+
+        else:
+            self.adaptive = False
 
         #Initialize subscribers and publishers if running in real-time
         if not self.replay:
@@ -57,6 +65,9 @@ class ExerciseController:
         self.eval_case_log = []
         self.speed_case_log = []
         self.resampled_reps = []
+        self.context = []
+        self.actions = []
+        self.rewards = []
 
         #Initialize logging
         self.logger = logging.getLogger('logging')
@@ -72,10 +83,14 @@ class ExerciseController:
         self.logger.addHandler(ch)
 
     def update_robot_style(self, robot_style):
-        self.robot_style = robot_style
-        self.neutral_expression = NEUTRAL_EXPRESSIONS[robot_style]
-        self.neutral_posture = NEUTRAL_POSTURES[robot_style]
-        self.start_set_smile = START_SET_SMILE[robot_style]
+        if robot_style == 5:
+            self.robot_style = 1
+        else:
+            self.robot_style = robot_style
+        self.neutral_expression = NEUTRAL_EXPRESSIONS[self.robot_style]
+        self.neutral_posture = NEUTRAL_POSTURES[self.robot_style]
+        self.start_set_smile = START_SET_SMILE[self.robot_style]
+
 
     def start_new_set(self, exercise_name, set_num, tot_sets):
         #Update data storage
@@ -86,6 +101,9 @@ class ExerciseController:
         self.peaks.append([])
         self.feedback.append([])
         self.times.append([])
+        self.context.append([])
+        self.actions.append([])
+        self.rewards.append([])
         self.current_exercise = exercise_name
         self.exercise_name_list.append(exercise_name)
         self.eval_case_log.append([])
@@ -208,6 +226,7 @@ class ExerciseController:
         self.performance[-1] = np.vstack((self.performance[-1], feedback['evaluation']))
         
         self.logger.info('Rep {}: Feedback {}'.format(len(self.feedback[-1]), feedback))
+
         self.react(self.feedback[-1], self.current_exercise)
         
         return feedback
@@ -229,7 +248,7 @@ class ExerciseController:
         self.times[-1].append(current_time)
 
         #Look for new peaks
-        if self.angles[-1].shape[0] > 30 and self.angles[-1].shape[0] % 5:
+        if self.angles[-1].shape[0] > 30 and self.angles[-1].shape[0] % 15:
             # print('Condition 1', self.angles[-1].shape[0])
             #If far enough away from previous peak
             if len(self.peaks[-1]) == 0 or (self.peaks[-1][-1] + 20 < self.angles[-1].shape[0]):
@@ -281,6 +300,11 @@ class ExerciseController:
                         self.evaluate_rep(self.peaks[-1][-2], self.peaks[-1][-1], rep_duration)
                         end = time.time()
                         self.logger.info('Evaluation took {} seconds'.format(np.round(end-start, 1)))
+
+            # #Check if no movement in the last few seconds
+            # min_in_range = np.min(self.angles[-1][-30:,:][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds'][0]])
+            # max_in_range = np.max(self.angles[-1][-30:,:][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds'][0]])
+            # print(max_in_range - min_in_range)
 
     def plot_angles(self):
         order = ['xy', 'yz', 'xz']
@@ -682,6 +706,32 @@ class ExerciseController:
 
         speed_case = self.find_speed_case(feedback)
         self.speed_case_log[-1].append(speed_case)
+        
+        if self.adaptive:
+            #Get arm
+            context = 0
+            if np.min(feedback[-1]['evaluation']) >= 0:
+                reward = 1
+            else:
+                reward = 0
+            
+            #Write to file
+            with open('src/quori_exercises/exercise_session/' + self.adaptive_data_filename, 'a') as f:
+                f.write('{},{}\n'.format(context, reward))
+
+            time.sleep(0.1)
+            with open('src/quori_exercises/exercise_session/' + self.adaptive_action_filename, 'r') as f:
+                lines = f.readlines()
+                action_choice = int(lines[len(lines)-1][0])
+                if action_choice == 0:
+                    self.update_robot_style(1)
+                else:
+                    self.update_robot_style(3)
+        else:
+            context = 0
+        
+        self.context[-1].append(context)
+        self.actions[-1].append(self.robot_style)
 
         #Get message for each case
         eval_chosen_case, eval_message = self.get_message(eval_case)
