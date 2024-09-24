@@ -17,8 +17,7 @@ ANGLE_ORDER = {
 EXERCISE_INFO = {
     'bicep_curls': {
         'segmenting_joints': [('right_elbow', 0),
-                                ('left_elbow',  0),
-                                ('right_elbow', 2)],
+                                ('left_elbow',  0)],
         'comparison_joints': [('right_shoulder', [0, 1, 2]), 
                                 ('left_shoulder', [0, 1, 2]), 
                                 ('right_elbow', [0, 1, 2]),
@@ -27,7 +26,7 @@ EXERCISE_INFO = {
         'threshold2': 10000,
         'segmenting_joint_inds': [],
         'current_angles_min': 50,
-        'max_grad': 3,
+        'max_grad': 200,
         'max_in_range': 130
 
     },
@@ -42,7 +41,7 @@ EXERCISE_INFO = {
         'threshold2': 12500,
         'segmenting_joint_inds': [],
         'current_angles_min': 35,
-        'max_grad': 1.5,
+        'max_grad': 200,
         'max_in_range': 45
     }
 

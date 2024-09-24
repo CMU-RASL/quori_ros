@@ -27,7 +27,7 @@ EXERCISE_INFO = {
         'threshold2': 10000,
         'segmenting_joint_inds': [],
         'current_angles_min': 50,
-        'max_grad': 3,
+        'max_grad': 200,
         'max_in_range': 130
 
     },
@@ -42,7 +42,7 @@ EXERCISE_INFO = {
         'threshold2': 12500,
         'segmenting_joint_inds': [],
         'current_angles_min': 35,
-        'max_grad': 1.5,
+        'max_grad': 200,
         'max_in_range': 45
     }
 

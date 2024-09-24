@@ -69,6 +69,7 @@ class PoseTracking:
 
             angle_msg = Float64MultiArray()
             data = []
+            
             for joint_group, angle_description in ANGLE_INFO:
                 indices = [self.landmark_points.index(angle_description[i]) for i in range(3)]
                 points = [np.array(landmarks[i]) for i in indices]
@@ -78,7 +79,7 @@ class PoseTracking:
                 for plane in ['xy', 'yz', 'xz']:
                     angle = self.calc_angle(vec_0, vec_1, plane)
                     data.append(angle)
-            
+            data.append(rospy.get_time())
             angle_msg.data = data
             angle_pub.publish(angle_msg)
 
