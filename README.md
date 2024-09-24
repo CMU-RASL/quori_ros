@@ -70,6 +70,11 @@ export ROS_HOSTNAME=$ROS_IP
 source devel/setup.bash
 ```
 
+export ROS_IP=$(hostname -I | awk '{print $1;}')
+export ROS_MASTER_URI=http://192.168.1.88:11311 
+export ROS_HOSTNAME=$ROS_IP
+source devel/setup.bash
+
 ## Running only on one machine
 ```
 cd quori_files/quori_ros

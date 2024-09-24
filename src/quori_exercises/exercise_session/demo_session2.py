@@ -18,13 +18,13 @@ SET_LENGTH = 45
 # EXERCISE_LIST = ['bicep_curls'] #comment out before actual sessions
 EXERCISE_LIST = ['bicep_curls']
 
-#Change at beginning of study
+#Change at beginning of study - make sure to change in adaptive_controller.py as well
 PARTICIPANT_ID = '1'
 RESTING_HR = 68
 AGE = 67
 
 #Change at beginning of each round
-ROBOT_STYLE = 5 #1 is firm, 3 is encouraging, 5 is adaptive
+ROBOT_STYLE = 3 #1 is firm, 3 is encouraging, 5 is adaptive
 ROUND_NUM = 1
 
 MAX_HR = 220-AGE
@@ -136,7 +136,17 @@ for set_num, exercise_name in enumerate(EXERCISE_LIST):
 # controller.message('You are all done with exercises today. Great job!')
 controller.change_expression('smile', controller.start_set_smile, 4)
 
-data = {'angles': controller.angles, 'peaks': controller.peaks, 'feedback': controller.feedback, 'times': controller.times, 'exercise_names': controller.exercise_name_list, 'all_hr': controller.all_heart_rates, 'heart_rates': controller.heart_rates, 'hrr': controller.hrr}
+if controller.robot_style == 5:
+    controller.process.stdin.write('exit\n')
+    controller.process.stdin.flush()
+
+    if controller.process.stdin:
+        controller.process.stdin.close()
+    if controller.process.stdout:
+        controller.process.stdout.close()
+    controller.process.wait()
+
+data = {'angles': controller.angles, 'peaks': controller.peaks, 'feedback': controller.feedback, 'times': controller.times, 'exercise_names': controller.exercise_name_list, 'all_hr': controller.all_heart_rates, 'heart_rates': controller.heart_rates, 'hrr': controller.hrr, 'actions': controller.actions, 'context': controller.context, 'rewards': controller.rewards}
 dbfile = open('/home/roshni/quori_files/quori_ros/src/quori_exercises/saved_data/{}'.format(data_filename), 'ab')
 
 pickle.dump(data, dbfile)                    

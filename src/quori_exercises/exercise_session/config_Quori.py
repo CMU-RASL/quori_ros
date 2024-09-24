@@ -95,5 +95,5 @@ ALL_MESSAGES = {}
 for e in ['bicep curls', 'lateral raises']:
     ALL_MESSAGES[e] = {}
     for f in ['low', 'moderate', 'high']:
-        with open('/home/quori4/quori_files/quori_ros/src/quori_exercises/exercise_session/{}_{}.json'.format(e, f)) as file:
+        with open('/home/quori4/quori_files/quori_ros/src/quori_exercises/exercise_session/{}_{}_edited.json'.format(e, f)) as file:
             ALL_MESSAGES[e][f] = json.load(file)

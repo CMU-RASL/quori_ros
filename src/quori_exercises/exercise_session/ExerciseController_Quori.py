@@ -32,6 +32,12 @@ class ExerciseController:
 
         #Robot style 0 - very firm, 1 - firm, 2 - neutral, 3 - encouraging, 4 - very encouraging
         self.update_robot_style(style)
+        if style == 5: #adaptive
+            self.adaptive = True
+            self.process = subprocess.Popen(['python3.9', 'src/quori_exercises/exercise_session/adaptive_controller.py'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
+
+        else:
+            self.adaptive = False
 
         #Initialize subscribers and publishers if running in real-time
         if not self.replay:
@@ -57,6 +63,9 @@ class ExerciseController:
         self.eval_case_log = []
         self.speed_case_log = []
         self.resampled_reps = []
+        self.context = []
+        self.actions = []
+        self.rewards = []
 
         #Initialize logging
         self.logger = logging.getLogger('logging')
@@ -72,10 +81,13 @@ class ExerciseController:
         self.logger.addHandler(ch)
 
     def update_robot_style(self, robot_style):
-        self.robot_style = robot_style
-        self.neutral_expression = NEUTRAL_EXPRESSIONS[robot_style]
-        self.neutral_posture = NEUTRAL_POSTURES[robot_style]
-        self.start_set_smile = START_SET_SMILE[robot_style]
+         if robot_style == 5:
+            self.robot_style = 3
+        else:
+            self.robot_style = robot_style
+        self.neutral_expression = NEUTRAL_EXPRESSIONS[self.robot_style]
+        self.neutral_posture = NEUTRAL_POSTURES[self.robot_style]
+        self.start_set_smile = START_SET_SMILE[self.robot_style]
 
     def start_new_set(self, exercise_name, set_num, tot_sets):
         #Update data storage
@@ -281,7 +293,23 @@ class ExerciseController:
                         self.evaluate_rep(self.peaks[-1][-2], self.peaks[-1][-1], rep_duration)
                         end = time.time()
                         self.logger.info('Evaluation took {} seconds'.format(np.round(end-start, 1)))
+        else:
+            #Check if no movement in the last few seconds
+            if self.angles[-1].shape[0] > 30:
+                min_in_range = np.min(self.angles[-1][-50:,:][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds'][0]])
+                max_in_range = np.max(self.angles[-1][-50:,:][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds'][0]])
+                
+                if (max_in_range - min_in_range) < 10:
+                    #Get style specific message
+                    _, m = self.get_message(['no movement'])
+                    self.message(m, priority=1)
 
+                #If peaks are too far apart, say something as a filler
+                elif (len(peaks[-1]) == 0 and self.angles[-1].shape[0] > 50) or (self.angles[-1].shape[0] - self.peaks[-1][-1] > 50):
+                    #Get style specific message
+                    _, m = self.get_message(['peaks far apart'])
+                    self.message(m, priority=1)
+                
     def plot_angles(self):
         order = ['xy', 'yz', 'xz']
         for set_num in range(len(self.angles)):
@@ -682,6 +710,31 @@ class ExerciseController:
 
         speed_case = self.find_speed_case(feedback)
         self.speed_case_log[-1].append(speed_case)
+
+        if np.min(feedback[-1]['evaluation']) >= 0:
+            reward = 1
+        else:
+            reward = 0
+        if self.adaptive:
+            #Get arm
+            context = 0
+
+            self.process.stdin.write(f"{context},{reward}\n")
+            self.process.stdin.flush()
+
+            result = self.process.stdout.readline().strip()
+            action_choice = int(result)
+            if action_choice == 0:
+                self.update_robot_style(1)
+            else:
+                self.update_robot_style(3)
+        else:
+            context = 0
+        
+        self.context[-1].append(context)
+        self.actions[-1].append(self.robot_style)
+        print('Context', context, 'Reward', reward, 'Action', self.robot_style)
+
 
         #Get message for each case
         eval_chosen_case, eval_message = self.get_message(eval_case)

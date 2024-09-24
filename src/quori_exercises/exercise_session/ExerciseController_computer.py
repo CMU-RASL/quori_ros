@@ -13,6 +13,7 @@ import time
 import logging
 from config_computer import *
 import sys
+import subprocess
 
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 import syllables
@@ -35,8 +36,7 @@ class ExerciseController:
         self.update_robot_style(style)
         if style == 5: #adaptive
             self.adaptive = True
-            self.adaptive_data_filename = 'adaptive_data/Participant_{}_{}.txt'.format(user_id, datetime.now().strftime("%Y-%m-%d"))
-            self.adaptive_action_filename = 'adaptive_data/Participant_{}_{}_actions.txt'.format(user_id, datetime.now().strftime("%Y-%m-%d"))
+            self.process = subprocess.Popen(['python3.9', 'src/quori_exercises/exercise_session/adaptive_controller.py'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
 
         else:
             self.adaptive = False
@@ -84,13 +84,12 @@ class ExerciseController:
 
     def update_robot_style(self, robot_style):
         if robot_style == 5:
-            self.robot_style = 1
+            self.robot_style = 3
         else:
             self.robot_style = robot_style
         self.neutral_expression = NEUTRAL_EXPRESSIONS[self.robot_style]
         self.neutral_posture = NEUTRAL_POSTURES[self.robot_style]
         self.start_set_smile = START_SET_SMILE[self.robot_style]
-
 
     def start_new_set(self, exercise_name, set_num, tot_sets):
         #Update data storage
@@ -248,12 +247,12 @@ class ExerciseController:
         self.times[-1].append(current_time)
 
         #Look for new peaks
-        if self.angles[-1].shape[0] > 30 and self.angles[-1].shape[0] % 15:
+        if self.angles[-1].shape[0] > 10 and self.angles[-1].shape[0] % 5:
             # print('Condition 1', self.angles[-1].shape[0])
             #If far enough away from previous peak
-            if len(self.peaks[-1]) == 0 or (self.peaks[-1][-1] + 20 < self.angles[-1].shape[0]):
+            if len(self.peaks[-1]) == 0 or (self.peaks[-1][-1] + 5 < self.angles[-1].shape[0]):
                 # print('Condition 2', self.angles[-1].shape[0])
-                to_check_amount = 15
+                to_check_amount = 10
 
                 #Calculate maxes and mins
                 current_angles_min = np.min(self.angles[-1][-to_check_amount:,:][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']])
@@ -276,7 +275,7 @@ class ExerciseController:
                     peak_candidate = np.min([self.angles[-1].shape[0]-1, peak_candidate])
                     # print('Condition 3', peak_candidate, self.angles[-1].shape[0])
 
-                    if len(self.peaks[-1]) == 0 or (self.peaks[-1][-1] + 20 < peak_candidate and np.max(self.angles[-1][self.peaks[-1][-1]:peak_candidate,:][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']]) > EXERCISE_INFO[self.current_exercise]['max_in_range']):
+                    if len(self.peaks[-1]) == 0 or (self.peaks[-1][-1] + 5 < peak_candidate and np.max(self.angles[-1][self.peaks[-1][-1]:peak_candidate,:][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']]) > EXERCISE_INFO[self.current_exercise]['max_in_range']):
                         
                         # print('Condition 4', peak_candidate, self.angles[-1].shape[0])
                         if self.current_exercise == 'bicep_curls':
@@ -301,10 +300,22 @@ class ExerciseController:
                         end = time.time()
                         self.logger.info('Evaluation took {} seconds'.format(np.round(end-start, 1)))
 
-            # #Check if no movement in the last few seconds
-            # min_in_range = np.min(self.angles[-1][-30:,:][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds'][0]])
-            # max_in_range = np.max(self.angles[-1][-30:,:][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds'][0]])
-            # print(max_in_range - min_in_range)
+        else:
+            #Check if no movement in the last few seconds
+            if self.angles[-1].shape[0] > 30:
+                min_in_range = np.min(self.angles[-1][-30:,:][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds'][0]])
+                max_in_range = np.max(self.angles[-1][-30:,:][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds'][0]])
+                
+                if (max_in_range - min_in_range) < 10:
+                    #Get style specific message
+                    _, m = self.get_message(['no movement'])
+                    self.message(m, priority=1)
+                
+                #If peaks are too far apart, say something as a filler
+                elif (len(peaks[-1]) == 0 and self.angles[-1].shape[0] > 30) or (self.angles[-1].shape[0] - self.peaks[-1][-1] > 30):
+                    #Get style specific message
+                    _, m = self.get_message(['peaks far apart'])
+                    self.message(m, priority=1)
 
     def plot_angles(self):
         order = ['xy', 'yz', 'xz']
@@ -313,7 +324,10 @@ class ExerciseController:
             ii = 0
             for row in range(4):
                 for col in range(3):
+                    #check if the angles are the same size as the times
+                    
                     ax[row, col].plot(self.angles[set_num][:,ii], 'k')
+
                     for peak_num, (beg, end) in enumerate(zip(self.peaks[set_num][:-1], self.peaks[set_num][1:])):
                         ax[row, col].plot(beg, self.angles[set_num][beg,ii], 'ob', markersize=5)
                         ax[row, col].plot(end, self.angles[set_num][end,ii], 'ob', markersize=5)
@@ -327,6 +341,28 @@ class ExerciseController:
                     ii += 1
             fig.suptitle('Set {} out of {}'.format(set_num+1, len(self.angles)))
             fig.tight_layout(pad=2.0)
+
+            # fig, ax = plt.subplots(4, 3, sharex=True, sharey=True)
+            # ii = 0
+            # for row in range(4):
+            #     for col in range(3):
+            #         #check if the angles are the same size as the times
+                    
+            #         ax[row, col].plot([(self.times[set_num][tt] - self.times[set_num][0]).total_seconds() for tt in range(len(self.times[set_num]))], self.angles[set_num][:,ii], 'k')
+
+            #         for peak_num, (beg, end) in enumerate(zip(self.peaks[set_num][:-1], self.peaks[set_num][1:])):
+            #             ax[row, col].plot((self.times[set_num][beg] - self.times[set_num][0]).total_seconds(), self.angles[set_num][beg,ii], 'ob', markersize=5)
+            #             ax[row, col].plot((self.times[set_num][end] - self.times[set_num][0]).total_seconds(), self.angles[set_num][end,ii], 'ob', markersize=5)
+            #             if len(self.feedback[set_num]) > 0:
+            #                 if np.min(self.feedback[set_num][peak_num]['evaluation']) >= 0:
+            #                     color = 'g'
+            #                 else:
+            #                     color = 'r'
+            #                 ax[row, col].plot([(self.times[set_num][tt] - self.times[set_num][0]).total_seconds() for tt in np.arange(beg, end)], self.angles[set_num][beg:end,ii], color)
+            #         ax[row, col].set_title('{}-{}'.format(ANGLE_INFO[row][0], order[col]))
+            #         ii += 1
+            # fig.suptitle('Set {} out of {}'.format(set_num+1, len(self.angles)))
+            # fig.tight_layout(pad=2.0)
         plt.show()
     
     def message(self, m, priority=2):
@@ -707,31 +743,29 @@ class ExerciseController:
         speed_case = self.find_speed_case(feedback)
         self.speed_case_log[-1].append(speed_case)
         
+        if np.min(feedback[-1]['evaluation']) >= 0:
+            reward = 1
+        else:
+            reward = 0
         if self.adaptive:
             #Get arm
             context = 0
-            if np.min(feedback[-1]['evaluation']) >= 0:
-                reward = 1
-            else:
-                reward = 0
-            
-            #Write to file
-            with open('src/quori_exercises/exercise_session/' + self.adaptive_data_filename, 'a') as f:
-                f.write('{},{}\n'.format(context, reward))
 
-            time.sleep(0.1)
-            with open('src/quori_exercises/exercise_session/' + self.adaptive_action_filename, 'r') as f:
-                lines = f.readlines()
-                action_choice = int(lines[len(lines)-1][0])
-                if action_choice == 0:
-                    self.update_robot_style(1)
-                else:
-                    self.update_robot_style(3)
+            self.process.stdin.write(f"{context},{reward}\n")
+            self.process.stdin.flush()
+
+            result = self.process.stdout.readline().strip()
+            action_choice = int(result)
+            if action_choice == 0:
+                self.update_robot_style(1)
+            else:
+                self.update_robot_style(3)
         else:
             context = 0
         
         self.context[-1].append(context)
         self.actions[-1].append(self.robot_style)
+        print('Context', context, 'Reward', reward, 'Action', self.robot_style)
 
         #Get message for each case
         eval_chosen_case, eval_message = self.get_message(eval_case)
