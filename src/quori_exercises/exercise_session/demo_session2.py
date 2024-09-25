@@ -25,12 +25,13 @@ AGE = 67
 
 #Change at beginning of each round
 ROBOT_STYLE = 3 #1 is firm, 3 is encouraging, 5 is adaptive
-ROUND_NUM = 1
+ROUND_NUM = 0
 
 MAX_HR = 220-AGE
 
 VERBAL_CADENCE = 2 #1 is low, 2 is medium, 3 is high
 NONVERBAL_CADENCE = 2
+REST_TIME = 40
 
 #Initialize ROS node
 rospy.init_node('demo_session', anonymous=True)
@@ -47,117 +48,121 @@ rospy.sleep(2)
 
 rospy.sleep(4)
 
-input("Press Enter to to start exercise session...")
+if ROUND_NUM == 0:
+    controller.message('Welcome and thank you for taking the time to be part of this research study. My name is Quori and I will be your exercise coach today.')
 
-#For each exercise
-for set_num, exercise_name in enumerate(EXERCISE_LIST):
-            
-    #Start a new set
-    controller.start_new_set(exercise_name, set_num+1, len(EXERCISE_LIST))
-    
-    controller.logger.info('-------------------Recording!')
-    start_message = False
-    halfway_message = False
+    input('Press Enter to continue...')
 
-    #Lower arm all the way down
-    controller.move_right_arm('halfway', 'sides')
-    
-    inittime = datetime.now(timezone('EST'))
-    
-    #Stop between minimum and maximum time and minimum reps
-    while (datetime.now(timezone('EST')) - inittime).total_seconds() < SET_LENGTH:        
+    controller.message('Before we start, please look through the consent form on the laptop next to you and write your name as a signature. Please also choose the one of the three options for the optional permissions question. If you have any questions, please ask the researcher, and let me know when you are done.')
+
+    input('Press Enter to continue...')
+
+    controller.message('Great, thank you for signing. Next, can you please fill out the demographic survey on the laptop next to you. Let me know when you are done.')
+
+    input('Press Enter to continue...')
+
+    controller.message('Thank you for filling out the survey. Just to make sure I understood, can you please tell me your age?')
+
+    input('Press Enter to continue...')
+
+    controller.message('Thank you. I will now explain the exercise session we will do today. You will do three rounds with 4 sets each. The first two sets of each round will be bicep curls and the second two sets will be lateral raises. Each set will be 45 seconds. I will guide you through the exercises and give you feedback on your performance. You can take a look at the laptop screen for how to perform the two exercises, and please let the researcher know if you have any questions.')
+
+    input('Press Enter to continue...')
+
+    controller.message('Great, I have one more question to ask before you begin. I want to be the best coach I can be for you. Can you read the question on the laptop and choose one of the three options about the types of feedback you prefer. Please let me know when you are done.')
+
+    input('Press Enter to continue...')
+
+    controller.message('Thank you for answering the question. We will start the first round of exercise now. As a reminder, you will be starting with bicep curls and I will tell you you when to start and stop. You can place the laptop next to you and pick up the dumbbells if you want to use them.')
+
+if ROUND_NUM > 0:
+    input("Press Enter to to start exercise session...")
+
+    #For each exercise
+    for set_num, exercise_name in enumerate(EXERCISE_LIST):
                 
-        #Robot says starting set
-        if not start_message:
-            robot_message = "Start %s now" % (exercise_name.replace("_", " " ))
-            controller.message(robot_message)
-            start_message = True
+        #Start a new set
+        controller.start_new_set(exercise_name, set_num+1, len(EXERCISE_LIST))
+        
+        controller.logger.info('-------------------Recording!')
+        start_message = False
+        halfway_message = False
 
-        controller.flag = True
+        #Lower arm all the way down
+        controller.move_right_arm('halfway', 'sides')
+        
+        inittime = datetime.now(timezone('EST'))
+        
+        #Stop between minimum and maximum time and minimum reps
+        while (datetime.now(timezone('EST')) - inittime).total_seconds() < SET_LENGTH:        
+                    
+            #Robot says starting set
+            if not start_message:
+                robot_message = "Start %s now" % (exercise_name.replace("_", " " ))
+                controller.message(robot_message)
+                start_message = True
 
-        if (datetime.now(timezone('EST')) - inittime).total_seconds() > SET_LENGTH/2 and not halfway_message:
-            robot_message = "You are halfway"
-            controller.message(robot_message)
-            halfway_message = True 
+            controller.flag = True
 
-        if (datetime.now(timezone('EST')) - inittime).total_seconds() > SET_LENGTH:
-            break 
+            if (datetime.now(timezone('EST')) - inittime).total_seconds() > SET_LENGTH/2 and not halfway_message:
+                robot_message = "You are halfway"
+                controller.message(robot_message)
+                halfway_message = True 
 
-    controller.flag = False
-    controller.logger.info('-------------------Done with exercise')
+            if (datetime.now(timezone('EST')) - inittime).total_seconds() > SET_LENGTH:
+                break 
 
-    robot_message = "Almost done."
-    controller.message(robot_message)
-    rospy.sleep(3)
+        controller.flag = False
+        controller.logger.info('-------------------Done with exercise')
 
-    #Calculate set-level performance
-    rep_performance = []
-    for f in controller.feedback[-1]:
-        if np.min(f['evaluation']) > 0:
-            rep_performance.append(1)
+        robot_message = "Almost done."
+        controller.message(robot_message)
+        rospy.sleep(3)
+
+        robot_message = "Rest."
+        controller.message(robot_message)
+        controller.change_expression('smile', controller.start_set_smile, 4)
+
+        #Raise arm all the way up
+        controller.move_right_arm('sides', 'up')
+        
+        if set_num + 1 < len(EXERCISE_LIST):
+            halfway_message = False
+            while (datetime.now(timezone('EST')) - rest_start).total_seconds() < REST_TIME:
+                
+                #Print halfway done with rest here
+                if (datetime.now(timezone('EST')) - rest_start).total_seconds() > REST_TIME/2 and not halfway_message:
+                    halfway_message = True
+                    robot_message = "Rest for {} more seconds.".format(int(REST_TIME/2))
+                    controller.message(robot_message)
         else:
-            rep_performance.append(0)
+            robot_message = "Round complete. Please pick up the laptop and complete a survey about this round."
+            controller.message(robot_message)
 
-    if len(rep_performance) == 0:
-        set_performance = 0
-        set_performance_explanation = 'Medium'
-    elif np.mean(rep_performance) > 0.6:
-        set_performance = 1
-        set_performance_explanation = 'Excellent'
-    else:
-        set_performance = 0
-        set_performance_explanation = 'Medium'
-    
-    set_pub.publish(set_performance)
-    controller.logger.info('|||||Rep performance: {}, Set performance: {}'.format(rep_performance, set_performance_explanation))
-
-    robot_message = "Rest."
-    controller.message(robot_message)
     controller.change_expression('smile', controller.start_set_smile, 4)
 
-    #Raise arm all the way up
-    controller.move_right_arm('sides', 'up')
+    if controller.robot_style == 5:
+        controller.process.stdin.write('exit\n')
+        controller.process.stdin.flush()
 
-    def on_press(key):
-        try:
-            if key == keyboard.Key.enter:
-                return False
-        except AttributeError:
-            pass
-    
-    with keyboard.Listener(on_press=on_press) as listener:
-        for _ in range(10000):
-            set_pub.publish(set_performance)
-            print('Press enter to start next set, Publishing set performance {}'.format(set_performance))
-            time.sleep(1)
-            if not listener.running:
-                break
+        if controller.process.stdin:
+            controller.process.stdin.close()
+        if controller.process.stdout:
+            controller.process.stdout.close()
+        controller.process.wait()
 
-# controller.message('You are all done with exercises today. Great job!')
-controller.change_expression('smile', controller.start_set_smile, 4)
+    data = {'angles': controller.angles, 'peaks': controller.peaks, 'feedback': controller.feedback, 'times': controller.times, 'exercise_names': controller.exercise_name_list, 'all_hr': controller.all_heart_rates, 'heart_rates': controller.heart_rates, 'hrr': controller.hrr, 'actions': controller.actions, 'context': controller.context, 'rewards': controller.rewards}
+    dbfile = open('/home/roshni/quori_files/quori_ros/src/quori_exercises/saved_data/{}'.format(data_filename), 'ab')
 
-if controller.robot_style == 5:
-    controller.process.stdin.write('exit\n')
-    controller.process.stdin.flush()
+    pickle.dump(data, dbfile)                    
+    dbfile.close()
 
-    if controller.process.stdin:
-        controller.process.stdin.close()
-    if controller.process.stdout:
-        controller.process.stdout.close()
-    controller.process.wait()
-
-data = {'angles': controller.angles, 'peaks': controller.peaks, 'feedback': controller.feedback, 'times': controller.times, 'exercise_names': controller.exercise_name_list, 'all_hr': controller.all_heart_rates, 'heart_rates': controller.heart_rates, 'hrr': controller.hrr, 'actions': controller.actions, 'context': controller.context, 'rewards': controller.rewards}
-dbfile = open('/home/roshni/quori_files/quori_ros/src/quori_exercises/saved_data/{}'.format(data_filename), 'ab')
-
-pickle.dump(data, dbfile)                    
-dbfile.close()
-
-controller.logger.info('Saved file {}'.format(data_filename))
+    controller.logger.info('Saved file {}'.format(data_filename))
 
 controller.logger.handlers.clear()
 logging.shutdown()
 print('Done!')
 
-controller.plot_angles()
+# controller.plot_angles()
 
 plt.show()
