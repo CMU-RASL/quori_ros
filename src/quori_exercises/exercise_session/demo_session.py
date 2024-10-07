@@ -24,7 +24,7 @@ RESTING_HR = 68
 AGE = 67
 
 #Change at beginning of each round
-ROBOT_STYLE = 3 #1 is firm, 3 is encouraging
+ROBOT_STYLE = 3 #1 is firm, 3 is encouraging, 5 is adaptive
 ROUND_NUM = 1
 
 MAX_HR = 220-AGE
@@ -90,26 +90,26 @@ for set_num, exercise_name in enumerate(EXERCISE_LIST):
     controller.message(robot_message)
     rospy.sleep(3)
 
-    #Calculate set-level performance
-    rep_performance = []
-    for f in controller.feedback[-1]:
-        if np.min(f['evaluation']) > 0:
-            rep_performance.append(1)
-        else:
-            rep_performance.append(0)
+    # #Calculate set-level performance
+    # rep_performance = []
+    # for f in controller.feedback[-1]:
+    #     if np.min(f['evaluation']) > 0:
+    #         rep_performance.append(1)
+    #     else:
+    #         rep_performance.append(0)
 
-    if len(rep_performance) == 0:
-        set_performance = 0
-        set_performance_explanation = 'Medium'
-    elif np.mean(rep_performance) > 0.6:
-        set_performance = 1
-        set_performance_explanation = 'Excellent'
-    else:
-        set_performance = 0
-        set_performance_explanation = 'Medium'
+    # if len(rep_performance) == 0:
+    #     set_performance = 0
+    #     set_performance_explanation = 'Medium'
+    # elif np.mean(rep_performance) > 0.6:
+    #     set_performance = 1
+    #     set_performance_explanation = 'Excellent'
+    # else:
+    #     set_performance = 0
+    #     set_performance_explanation = 'Medium'
     
-    set_pub.publish(set_performance)
-    controller.logger.info('|||||Rep performance: {}, Set performance: {}'.format(rep_performance, set_performance_explanation))
+    # set_pub.publish(set_performance)
+    # controller.logger.info('|||||Rep performance: {}, Set performance: {}'.format(rep_performance, set_performance_explanation))
 
     robot_message = "Rest."
     controller.message(robot_message)
@@ -136,7 +136,18 @@ for set_num, exercise_name in enumerate(EXERCISE_LIST):
 # controller.message('You are all done with exercises today. Great job!')
 controller.change_expression('smile', controller.start_set_smile, 4)
 
-data = {'angles': controller.angles, 'peaks': controller.peaks, 'feedback': controller.feedback, 'times': controller.times, 'exercise_names': controller.exercise_name_list, 'all_hr': controller.all_heart_rates, 'heart_rates': controller.heart_rates, 'hrr': controller.hrr}
+if controller.robot_style == 5:
+    controller.process.stdin.write('exit\n')
+    controller.process.stdin.flush()
+
+    if controller.process.stdin:
+        controller.process.stdin.close()
+    if controller.process.stdout:
+        controller.process.stdout.close()
+    controller.process.wait()
+
+data = {'angles': controller.angles, 'peaks': controller.peaks, 'feedback': controller.feedback, 'times': controller.times, 'exercise_names': controller.exercise_name_list, 'all_hr': controller.all_heart_rates, 'heart_rates': controller.heart_rates, 'hrr': controller.hrr, 'actions': controller.actions, 'context': controller.context, 'rewards': controller.rewards}
+
 dbfile = open('/home/roshni/quori_files/quori_ros/src/quori_exercises/saved_data/{}'.format(data_filename), 'ab')
 
 pickle.dump(data, dbfile)                    

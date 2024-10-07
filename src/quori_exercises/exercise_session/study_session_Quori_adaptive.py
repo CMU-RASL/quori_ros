@@ -15,26 +15,27 @@ from pynput import keyboard
 
 #Parameters
 SET_LENGTH = 45
+REST_TIME = 40
 # EXERCISE_LIST = ['bicep_curls'] #comment out before actual sessions
 EXERCISE_LIST = ['bicep_curls']
 
 #Change at beginning of study - make sure to change in adaptive_controller.py as well
 PARTICIPANT_ID = '1'
-RESTING_HR = 68
-AGE = 67
+RESTING_HR = 60
+AGE = 29
 
 #Change at beginning of each round
 ROBOT_STYLE = 3 #1 is firm, 3 is encouraging, 5 is adaptive
-ROUND_NUM = 0
+ROUND_NUM = 1
 
 MAX_HR = 220-AGE
 
 VERBAL_CADENCE = 2 #1 is low, 2 is medium, 3 is high
 NONVERBAL_CADENCE = 2
-REST_TIME = 40
+
 
 #Initialize ROS node
-rospy.init_node('demo_session', anonymous=True)
+rospy.init_node('study_session', anonymous=True)
 rate = rospy.Rate(10)
 set_pub = rospy.Publisher("set_performance", Int32, queue_size=10)
 
@@ -48,12 +49,19 @@ rospy.sleep(2)
 
 rospy.sleep(4)
 
+intake_heart_rates = []
+def intake_heart_rate_callback(msg):
+    intake_heart_rates.append(msg.data)
+    
+
 if ROUND_NUM == 0:
+    heart_rate_sub = rospy.Subscriber("/heart_rate", Int32, intake_heart_rate_callback, queue_size=3000)
+
     controller.message('Welcome and thank you for taking the time to be part of this research study. My name is Quori and I will be your exercise coach today.')
 
     input('Press Enter to continue...')
 
-    controller.message('Before we start, please look through the consent form on the laptop next to you and write your name as a signature. Please also choose the one of the three options for the optional permissions question. If you have any questions, please ask the researcher, and let me know when you are done.')
+    controller.message('Before we start, please look through the consent form on the laptop next to you and write your name as a signature. Please also choose one of the three options for the optional permissions question. If you have any questions, please ask the researcher, and let me know when you are done.')
 
     input('Press Enter to continue...')
 
@@ -65,7 +73,7 @@ if ROUND_NUM == 0:
 
     input('Press Enter to continue...')
 
-    controller.message('Thank you. I will now explain the exercise session we will do today. You will do three rounds with 4 sets each. The first two sets of each round will be bicep curls and the second two sets will be lateral raises. Each set will be 45 seconds. I will guide you through the exercises and give you feedback on your performance. You can take a look at the laptop screen for how to perform the two exercises, and please let the researcher know if you have any questions.')
+    controller.message('Thank you. I will now explain the exercise session we will do today. You will do three rounds with 4 sets each. The first two sets of each round will be bicep curls and the second two sets will be lateral raises. Each set will be 45 seconds. I will guide you through the exercises and give you feedback. You can take a look at the laptop screen for how to perform the two exercises, and please let the researcher know if you have any questions.')
 
     input('Press Enter to continue...')
 
@@ -74,6 +82,8 @@ if ROUND_NUM == 0:
     input('Press Enter to continue...')
 
     controller.message('Thank you for answering the question. We will start the first round of exercise now. As a reminder, you will be starting with bicep curls and I will tell you you when to start and stop. You can place the laptop next to you and pick up the dumbbells if you want to use them.')
+
+    controller.logger.info('Resting Heart Rate Computed: {}'.format(np.mean(intake_heart_rates)))
 
 if ROUND_NUM > 0:
     input("Press Enter to to start exercise session...")
@@ -119,7 +129,9 @@ if ROUND_NUM > 0:
         controller.message(robot_message)
         rospy.sleep(3)
 
-        robot_message = "Rest."
+        rest_start = datetime.now(timezone('EST'))
+
+        robot_message = "Rest"
         controller.message(robot_message)
         controller.change_expression('smile', controller.start_set_smile, 4)
 
@@ -152,6 +164,7 @@ if ROUND_NUM > 0:
         controller.process.wait()
 
     data = {'angles': controller.angles, 'peaks': controller.peaks, 'feedback': controller.feedback, 'times': controller.times, 'exercise_names': controller.exercise_name_list, 'all_hr': controller.all_heart_rates, 'heart_rates': controller.heart_rates, 'hrr': controller.hrr, 'actions': controller.actions, 'context': controller.context, 'rewards': controller.rewards}
+    
     dbfile = open('/home/roshni/quori_files/quori_ros/src/quori_exercises/saved_data/{}'.format(data_filename), 'ab')
 
     pickle.dump(data, dbfile)                    
@@ -163,6 +176,6 @@ controller.logger.handlers.clear()
 logging.shutdown()
 print('Done!')
 
-# controller.plot_angles()
+controller.plot_angles()
 
 plt.show()

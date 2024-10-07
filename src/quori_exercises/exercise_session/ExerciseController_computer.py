@@ -609,7 +609,7 @@ class ExerciseController:
             # else:
             #     key3 = 'high'
             # self.logger.info('Heart Rate is {}, HRR is {}, Fatigue is {}'.format(self.heart_rates[-1][-1], self.hrr[-1][-1], key2))
-            # # key2 = 'low'
+
             key3 = ci
             key4 = styles[self.robot_style]
             m_to_add = ALL_MESSAGES[key1][key2][key3][key4]
@@ -762,9 +762,16 @@ class ExerciseController:
             reward = 1
         else:
             reward = 0
+
+        #Get last heart rate
+        context = 0
+        # if self.hrr[-1][-1] < 0.2:
+        #     context = 0
+        # elif self.hrr[-1][-1] < 0.4:
+        #     context = 1
+        # else:
+        #     context = 2
         if self.adaptive:
-            #Get arm
-            context = 0
 
             self.process.stdin.write(f"{context},{reward}\n")
             self.process.stdin.flush()
@@ -775,8 +782,6 @@ class ExerciseController:
                 self.update_robot_style(1)
             else:
                 self.update_robot_style(3)
-        else:
-            context = 0
         
         self.context[-1].append(context)
         self.actions[-1].append(self.robot_style)

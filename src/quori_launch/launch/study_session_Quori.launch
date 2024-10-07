@@ -1,8 +1,8 @@
 <launch>
-     <!-- <arg name="hardware" default="true" />
+     <arg name="hardware" default="true" />
      <include file="$(find quori_controller)/launch/quori_control_diff.launch">
           <arg name="hardware" value="$(arg hardware)" />
-     </include> -->
+     </include>
 
      <node pkg="quori_face_generator"
           name="quori_face" type="simVectors_Quori.py" output="screen" />
