@@ -13,12 +13,14 @@ import time
 import logging
 from config_computer import *
 import sys
+import subprocess
+
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 import syllables
 
 class ExerciseController:
 
-    def __init__(self, replay, log_filename, style, resting_hr, max_hr):
+    def __init__(self, replay, log_filename, style, resting_hr, max_hr, user_id):
 
         #Set initial parameters
         self.replay = replay
@@ -32,6 +34,12 @@ class ExerciseController:
 
         #Robot style 0 - very firm, 1 - firm, 2 - neutral, 3 - encouraging, 4 - very encouraging
         self.update_robot_style(style)
+        if style == 5: #adaptive
+            self.adaptive = True
+            self.process = subprocess.Popen(['python3.9', 'src/quori_exercises/exercise_session/adaptive_controller.py'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
+
+        else:
+            self.adaptive = False
 
         #Initialize subscribers and publishers if running in real-time
         if not self.replay:
@@ -57,6 +65,9 @@ class ExerciseController:
         self.eval_case_log = []
         self.speed_case_log = []
         self.resampled_reps = []
+        self.context = []
+        self.actions = []
+        self.rewards = []
 
         #Initialize logging
         self.logger = logging.getLogger('logging')
@@ -72,10 +83,13 @@ class ExerciseController:
         self.logger.addHandler(ch)
 
     def update_robot_style(self, robot_style):
-        self.robot_style = robot_style
-        self.neutral_expression = NEUTRAL_EXPRESSIONS[robot_style]
-        self.neutral_posture = NEUTRAL_POSTURES[robot_style]
-        self.start_set_smile = START_SET_SMILE[robot_style]
+        if robot_style == 5:
+            self.robot_style = 3
+        else:
+            self.robot_style = robot_style
+        self.neutral_expression = NEUTRAL_EXPRESSIONS[self.robot_style]
+        self.neutral_posture = NEUTRAL_POSTURES[self.robot_style]
+        self.start_set_smile = START_SET_SMILE[self.robot_style]
 
     def start_new_set(self, exercise_name, set_num, tot_sets):
         #Update data storage
@@ -86,6 +100,9 @@ class ExerciseController:
         self.peaks.append([])
         self.feedback.append([])
         self.times.append([])
+        self.context.append([])
+        self.actions.append([])
+        self.rewards.append([])
         self.current_exercise = exercise_name
         self.exercise_name_list.append(exercise_name)
         self.eval_case_log.append([])
@@ -208,6 +225,7 @@ class ExerciseController:
         self.performance[-1] = np.vstack((self.performance[-1], feedback['evaluation']))
         
         self.logger.info('Rep {}: Feedback {}'.format(len(self.feedback[-1]), feedback))
+
         self.react(self.feedback[-1], self.current_exercise)
         
         return feedback
@@ -218,50 +236,65 @@ class ExerciseController:
             return
 
         #Read angle from message
-        angle = angle_message.data
+        callback_data = angle_message.data
+        callback_data = np.array(callback_data)
+        angle = callback_data[:-1]
         self.angles[-1] = np.vstack((self.angles[-1], np.array(angle)))
+
+        #Save heart rate and hrr
         self.heart_rates[-1].append(self.all_heart_rates[-1])
         hrr = (self.all_heart_rates[-1] - self.resting_hr) / float(self.max_hr - self.resting_hr)
         self.hrr[-1].append(hrr)
 
-        #Get time
-        current_time = rospy.get_time()
+        #Save the time of the message
+        current_time = callback_data[-1]
         self.times[-1].append(current_time)
 
-        #Look for new peaks
-        if self.angles[-1].shape[0] > 30 and self.angles[-1].shape[0] % 5:
-            # print('Condition 1', self.angles[-1].shape[0])
-            #If far enough away from previous peak
-            if len(self.peaks[-1]) == 0 or (self.peaks[-1][-1] + 20 < self.angles[-1].shape[0]):
-                # print('Condition 2', self.angles[-1].shape[0])
-                to_check_amount = 15
+        #Get time of last peak and time of last angle
+        last_peak_time = (self.times[-1][self.peaks[-1][-1]] if len(self.peaks[-1]) > 0 else 0) - self.times[-1][0]
+        last_angle_time = current_time - self.times[-1][0]
 
-                #Calculate maxes and mins
+        #Look for new peaks after 1 second and every 5 angles
+        if last_angle_time > 1 and self.angles[-1].shape[0] % 5:
+            # print('Condition 1: Last Peak Time {}, Last Angle Time {}'.format(last_peak_time, last_angle_time))
+
+            #Check if far enough away from previous peak
+            if len(self.peaks[-1]) == 0 or (last_peak_time + 1 < last_angle_time):
+                
+                #Interval to check for peaks
+                to_check_amount = 10
+                to_check_times = self.times[-1][-to_check_amount:] - np.array(self.times[-1][0])
+
+                #Calculate maxes and mins in that interval
                 current_angles_min = np.min(self.angles[-1][-to_check_amount:,:][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']])
                 current_angles_max = np.max(self.angles[-1][-to_check_amount:,:][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']])
 
+                #Calculate max gradients in interval
                 grad = []
                 for index in EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']:
-                    grad.append(np.max(np.gradient(self.angles[-1][-to_check_amount:,][:,index])))
+                    grad.append(np.max(np.gradient(self.angles[-1][-to_check_amount:,][:,index], to_check_times)))
                 
+                #Calculate max gradient
                 max_grad = np.max(grad)
                 max_val_pos = np.argmax(self.angles[-1][-to_check_amount:,:][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']])
                 min_val_pos = np.argmin(self.angles[-1][-to_check_amount:,:][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']])
 
+                # print('Condition 2: Shape {}, Current Min {}, Current Max {}, Max Grad {}'.format(self.angles[-1].shape[0], current_angles_min, current_angles_max, max_grad))
                 peak_to_add = None
                 
                 if current_angles_min < EXERCISE_INFO[self.current_exercise]['current_angles_min'] and max_grad > EXERCISE_INFO[self.current_exercise]['max_grad']:
-
+                    
                     peak_candidate = self.angles[-1].shape[0]-to_check_amount+min_val_pos-1
 
                     peak_candidate = np.min([self.angles[-1].shape[0]-1, peak_candidate])
-                    # print('Condition 3', peak_candidate, self.angles[-1].shape[0])
+                    
+                    peak_candidate_time = self.times[-1][peak_candidate] - self.times[-1][0]
 
-                    if len(self.peaks[-1]) == 0 or (self.peaks[-1][-1] + 20 < peak_candidate and np.max(self.angles[-1][self.peaks[-1][-1]:peak_candidate,:][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']]) > EXERCISE_INFO[self.current_exercise]['max_in_range']):
+                    #Make sure peak candidate is not too close to previous peak and that a max has been reached between previous peak and current candidate
+                    if len(self.peaks[-1]) == 0 or (last_peak_time + 1 < peak_candidate_time and np.max(self.angles[-1][self.peaks[-1][-1]:peak_candidate,:][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']]) > EXERCISE_INFO[self.current_exercise]['max_in_range']):
                         
-                        # print('Condition 4', peak_candidate, self.angles[-1].shape[0])
                         if self.current_exercise == 'bicep_curls':
-                            if np.min(self.angles[-1][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']][peak_candidate,:]) < 40:
+                            if np.min(self.angles[-1][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']][peak_candidate,:]) > 100:
                                 peak_to_add = peak_candidate
                         
                         if self.current_exercise == 'lateral_raises':
@@ -282,23 +315,65 @@ class ExerciseController:
                         end = time.time()
                         self.logger.info('Evaluation took {} seconds'.format(np.round(end-start, 1)))
 
+        else:
+            #Check if no movement in the last few seconds
+            if last_angle_time > 2:
+                min_in_range = np.min(self.angles[-1][-30:,:][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds'][0]])
+                max_in_range = np.max(self.angles[-1][-30:,:][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds'][0]])
+                
+                if (max_in_range - min_in_range) < 10:
+                    #Get style specific message
+                    _, m = self.get_message(['no movement'])
+                    self.message(m, priority=1)
+                
+                #If peaks are too far apart, say something as a filler
+                elif (len(self.peaks[-1]) == 0 and last_angle_time > 2) or (last_angle_time - last_peak_time > 6):
+                    #Get style specific message
+                    _, m = self.get_message(['peaks far apart'])
+                    self.message(m, priority=1)
+
     def plot_angles(self):
         order = ['xy', 'yz', 'xz']
         for set_num in range(len(self.angles)):
+            # fig, ax = plt.subplots(4, 3, sharex=True, sharey=True)
+            # ii = 0
+            # for row in range(4):
+            #     for col in range(3):
+            #         #check if the angles are the same size as the times
+                    
+            #         ax[row, col].plot(self.angles[set_num][:,ii], 'k')
+
+            #         for peak_num, (beg, end) in enumerate(zip(self.peaks[set_num][:-1], self.peaks[set_num][1:])):
+            #             ax[row, col].plot(beg, self.angles[set_num][beg,ii], 'ob', markersize=5)
+            #             ax[row, col].plot(end, self.angles[set_num][end,ii], 'ob', markersize=5)
+            #             if len(self.feedback[set_num]) > 0:
+            #                 if np.min(self.feedback[set_num][peak_num]['evaluation']) >= 0:
+            #                     color = 'g'
+            #                 else:
+            #                     color = 'r'
+            #                 ax[row, col].plot(np.arange(beg, end), self.angles[set_num][beg:end,ii], color)
+            #         ax[row, col].set_title('{}-{}'.format(ANGLE_INFO[row][0], order[col]))
+            #         ii += 1
+            # fig.suptitle('Set {} out of {}'.format(set_num+1, len(self.angles)))
+            # fig.tight_layout(pad=2.0)
+
             fig, ax = plt.subplots(4, 3, sharex=True, sharey=True)
             ii = 0
             for row in range(4):
                 for col in range(3):
-                    ax[row, col].plot(self.angles[set_num][:,ii], 'k')
+                    #check if the angles are the same size as the times
+                    
+                    ax[row, col].plot([(self.times[set_num][tt] - self.times[set_num][0]) for tt in range(len(self.times[set_num]))], self.angles[set_num][:,ii], 'k')
+
                     for peak_num, (beg, end) in enumerate(zip(self.peaks[set_num][:-1], self.peaks[set_num][1:])):
-                        ax[row, col].plot(beg, self.angles[set_num][beg,ii], 'ob', markersize=5)
-                        ax[row, col].plot(end, self.angles[set_num][end,ii], 'ob', markersize=5)
+                        ax[row, col].plot((self.times[set_num][beg] - self.times[set_num][0]), self.angles[set_num][beg,ii], 'ob', markersize=5)
+                        ax[row, col].plot((self.times[set_num][end] - self.times[set_num][0]), self.angles[set_num][end,ii], 'ob', markersize=5)
                         if len(self.feedback[set_num]) > 0:
                             if np.min(self.feedback[set_num][peak_num]['evaluation']) >= 0:
                                 color = 'g'
                             else:
                                 color = 'r'
-                            ax[row, col].plot(np.arange(beg, end), self.angles[set_num][beg:end,ii], color)
+                            ax[row, col].plot([(self.times[set_num][tt] - self.times[set_num][0]) for tt in np.arange(beg, end)], self.angles[set_num][beg:end,ii], color)
                     ax[row, col].set_title('{}-{}'.format(ANGLE_INFO[row][0], order[col]))
                     ii += 1
             fig.suptitle('Set {} out of {}'.format(set_num+1, len(self.angles)))
@@ -534,7 +609,7 @@ class ExerciseController:
             # else:
             #     key3 = 'high'
             # self.logger.info('Heart Rate is {}, HRR is {}, Fatigue is {}'.format(self.heart_rates[-1][-1], self.hrr[-1][-1], key2))
-            # # key2 = 'low'
+
             key3 = ci
             key4 = styles[self.robot_style]
             m_to_add = ALL_MESSAGES[key1][key2][key3][key4]
@@ -682,6 +757,35 @@ class ExerciseController:
 
         speed_case = self.find_speed_case(feedback)
         self.speed_case_log[-1].append(speed_case)
+        
+        if np.min(feedback[-1]['evaluation']) >= 0:
+            reward = 1
+        else:
+            reward = 0
+
+        #Get last heart rate
+        context = 0
+        # if self.hrr[-1][-1] < 0.2:
+        #     context = 0
+        # elif self.hrr[-1][-1] < 0.4:
+        #     context = 1
+        # else:
+        #     context = 2
+        if self.adaptive:
+
+            self.process.stdin.write(f"{context},{reward}\n")
+            self.process.stdin.flush()
+
+            result = self.process.stdout.readline().strip()
+            action_choice = int(result)
+            if action_choice == 0:
+                self.update_robot_style(1)
+            else:
+                self.update_robot_style(3)
+        
+        self.context[-1].append(context)
+        self.actions[-1].append(self.robot_style)
+        print('Context', context, 'Reward', reward, 'Action', self.robot_style)
 
         #Get message for each case
         eval_chosen_case, eval_message = self.get_message(eval_case)

@@ -10,4 +10,6 @@ __pycache__/
 archive/*
 .vscode/
 *.csv
+*.pickle
+*.log
 

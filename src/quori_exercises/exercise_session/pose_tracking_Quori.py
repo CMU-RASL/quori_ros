@@ -5,7 +5,7 @@ from pytz import timezone
 from datetime import datetime
 import numpy as np
 from sensor_msgs.msg import Image
-from quori_ros.src.quori_exercises.exercise_session.config_Quori import *
+from config_Quori import *
 import cv2
 
 import warnings
@@ -78,7 +78,7 @@ class PoseTracking:
                 for plane in ['xy', 'yz', 'xz']:
                     angle = self.calc_angle(vec_0, vec_1, plane)
                     data.append(angle)
-            
+            data.append(rospy.get_time())
             angle_msg.data = data
             angle_pub.publish(angle_msg)
 

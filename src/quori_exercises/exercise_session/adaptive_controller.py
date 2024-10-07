@@ -1,0 +1,65 @@
+from bayesianbandits import (
+    Arm,
+    ContextualAgent,
+    UpperConfidenceBound,
+    GammaRegressor
+)
+from datetime import datetime
+import time
+import sys
+import pickle
+
+USER_ID = '1'
+
+model_filename = 'models/Participant_{}_{}.pickle'.format(USER_ID, datetime.now().strftime("%Y-%m-%d"))
+
+arms = [
+            Arm(0, learner=GammaRegressor(alpha=1, beta=1)),
+            Arm(1, learner=GammaRegressor(alpha=1, beta=1)),
+            ]
+    
+policy = UpperConfidenceBound()
+agent = ContextualAgent(arms, policy)
+
+contexts = [0]
+rewards = []
+actions = [1]
+
+while True:
+    try:
+        user_input = input().strip()
+
+        if user_input.lower() == 'exit':
+            break
+
+        context, reward = map(int, user_input.split(','))
+
+        contexts.append(context)
+        rewards.append(reward)
+
+        #Train on previous rep
+        agent.select_for_update(actions[-1]).update(contexts[-1], rewards[-1])
+
+        #Get agent's action
+        action = agent.pull(contexts[-1])[0]
+
+        print(action)
+        sys.stdout.flush()
+
+    except ValueError:
+        pass
+    
+    except EOFError:
+        break
+    
+    except Exception as e:
+        print('Error: {}'.format(e))
+        break
+time.sleep(0.1)
+
+data = {'agent': agent, 'contexts': contexts, 'rewards': rewards, 'actions': actions}
+try:
+    with open(model_filename, 'wb') as f:
+        pickle.dump(data, f)
+except Exception as e:
+    print('Failed to save results: {}'.format(e))

@@ -571,5 +571,69 @@
             "You're crushing those bicep curls, keep up the fantastic work!",
             "Fantastic job! You're powering through those bicep curls!"
         ]
+    },
+
+    "no movement": {
+        "very firm": [
+            "Maintain proper form to prevent injury.",
+            "Maintain proper form to prevent any potential injuries.",
+            "Maintain proper form for optimal results.",
+            "Focus on maintaining proper form to prevent injury.",
+            "Focus on maintaining proper form for safety and effectiveness."
+        ],
+        "firm": [
+            "Make sure you are keeping a good speed on your bicep curls",
+            "Keep doing those bicep curls"
+        ],
+        "neutral": [
+            "Maintain good form and control throughout each repetition.",
+            "Maintain proper form and continue at this pace.",
+            "Continue with good speed and form, maintaining control.",
+            "Maintain proper form to avoid injury and optimize results.",
+            "Maintain proper form to prevent injury."
+        ],
+        "encouraging": [
+            "Keep smashing those bicep curls!",
+            "You've got this, keep up those bicep curls!"  
+        ],
+        "very encouraging": [
+            "Fantastic job! You're crushing those bicep curls!",
+            "Fantastic work! You've got this!",
+            "Fantastic job, your form is spot on today!",
+            "You're crushing those bicep curls, keep up the fantastic work!",
+            "Fantastic job! You're powering through those bicep curls!"
+        ]
+    },
+
+    "peaks far apart": {
+        "very firm": [
+            "Maintain proper form to prevent injury.",
+            "Maintain proper form to prevent any potential injuries.",
+            "Maintain proper form for optimal results.",
+            "Focus on maintaining proper form to prevent injury.",
+            "Focus on maintaining proper form for safety and effectiveness."
+        ],
+        "firm": [
+            "Make sure you are keeping a good speed on your bicep curls",
+            "Keep doing those bicep curls"
+        ],
+        "neutral": [
+            "Maintain good form and control throughout each repetition.",
+            "Maintain proper form and continue at this pace.",
+            "Continue with good speed and form, maintaining control.",
+            "Maintain proper form to avoid injury and optimize results.",
+            "Maintain proper form to prevent injury."
+        ],
+        "encouraging": [
+            "Keep smashing those bicep curls!",
+            "You've got this, keep up those bicep curls!"  
+        ],
+        "very encouraging": [
+            "Fantastic job! You're crushing those bicep curls!",
+            "Fantastic work! You've got this!",
+            "Fantastic job, your form is spot on today!",
+            "You're crushing those bicep curls, keep up the fantastic work!",
+            "Fantastic job! You're powering through those bicep curls!"
+        ]
     }
 }
