@@ -9,9 +9,9 @@ import time
 import sys
 import pickle
 
-USER_ID = '1'
+USER_ID = '0'
 
-model_filename = 'models/Participant_{}_{}.pickle'.format(USER_ID, datetime.now().strftime("%Y-%m-%d"))
+model_filename = 'src/quori_exercises/exercise_session/models/Participant_{}_{}.pickle'.format(USER_ID, datetime.now().strftime("%Y-%m-%d--%H-%M-%S"))
 
 arms = [
             Arm(0, learner=GammaRegressor(alpha=1, beta=1)),
@@ -21,30 +21,37 @@ arms = [
 policy = UpperConfidenceBound()
 agent = ContextualAgent(arms, policy)
 
-contexts = [0]
+contexts = []
 rewards = []
-actions = [1]
+actions = []
+
 
 while True:
     try:
+        # print('Awaiting input...')
         user_input = input().strip()
 
         if user_input.lower() == 'exit':
             break
 
-        context, reward = map(int, user_input.split(','))
+        c, a, r = map(int, user_input.split(','))
 
-        contexts.append(context)
-        rewards.append(reward)
+        #We are sampling the model
+        if a == -1:
+            action = agent.pull(c)[0]
+            print(action)
+            sys.stdout.flush()
+        
+        else:
+            #We are training the model
+            contexts.append(c)
+            actions.append(a)
+            rewards.append(r)
 
-        #Train on previous rep
-        agent.select_for_update(actions[-1]).update(contexts[-1], rewards[-1])
+            agent.select_for_update(actions[-1]).update(contexts[-1], rewards[-1])
+            print(1)
+            sys.stdout.flush()
 
-        #Get agent's action
-        action = agent.pull(contexts[-1])[0]
-
-        print(action)
-        sys.stdout.flush()
 
     except ValueError:
         pass

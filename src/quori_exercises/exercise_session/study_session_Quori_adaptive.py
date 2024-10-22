@@ -14,19 +14,19 @@ from std_msgs.msg import Int32
 from pynput import keyboard
 
 #Parameters
-SET_LENGTH = 45
+SET_LENGTH = 20
 REST_TIME = 40
-# EXERCISE_LIST = ['bicep_curls'] #comment out before actual sessions
-EXERCISE_LIST = ['bicep_curls']
+EXERCISE_LIST = ['bicep_curls'] #comment out before actual sessions
+# EXERCISE_LIST = ['bicep_curls', 'bicep_curls', 'lateral_raises', 'lateral_raises']
 
 #Change at beginning of study - make sure to change in adaptive_controller.py as well
-PARTICIPANT_ID = '1'
-RESTING_HR = 60
-AGE = 29
+PARTICIPANT_ID = '0'
+RESTING_HR = 97
+AGE = 26
 
 #Change at beginning of each round
-ROBOT_STYLE = 3 #1 is firm, 3 is encouraging, 5 is adaptive
-ROUND_NUM = 1
+ROBOT_STYLE = 5 #1 is firm, 3 is encouraging, 5 is adaptive
+ROUND_NUM = 1 #0 is intro
 
 MAX_HR = 220-AGE
 
@@ -81,11 +81,13 @@ if ROUND_NUM == 0:
 
     input('Press Enter to continue...')
 
-    controller.message('Thank you for answering the question. We will start the first round of exercise now. As a reminder, you will be starting with bicep curls and I will tell you you when to start and stop. You can place the laptop next to you and pick up the dumbbells if you want to use them.')
+    controller.message('Thank you for answering the question. We will start the first round of exercise now. As a reminder, you will be starting with bicep curls and I will tell you when to start and stop. You can pick up the dumbbells if you want to use them. There are images of the two exercises on the sheet taped to your left for your reference. Please stand in the blue square when you are ready to start.')
 
     controller.logger.info('Resting Heart Rate Computed: {}'.format(np.mean(intake_heart_rates)))
 
 if ROUND_NUM > 0:
+    input("Press Enter to to start exercise session...")
+    controller.message('Let us start Round {} now. Please stand in the blue square and pick up the dumbbells if you want to use them'.format(ROUND_NUM))
     input("Press Enter to to start exercise session...")
 
     #For each exercise
@@ -131,7 +133,7 @@ if ROUND_NUM > 0:
 
         rest_start = datetime.now(timezone('EST'))
 
-        robot_message = "Rest"
+        robot_message = "Time to rest."
         controller.message(robot_message)
         controller.change_expression('smile', controller.start_set_smile, 4)
 
@@ -148,7 +150,7 @@ if ROUND_NUM > 0:
                     robot_message = "Rest for {} more seconds.".format(int(REST_TIME/2))
                     controller.message(robot_message)
         else:
-            robot_message = "Round complete. Please pick up the laptop and complete a survey about this round."
+            robot_message = "Round complete. Please take a seat in the chair and complete a survey about this round on the laptop next to you."
             controller.message(robot_message)
 
     controller.change_expression('smile', controller.start_set_smile, 4)
@@ -161,9 +163,9 @@ if ROUND_NUM > 0:
             controller.process.stdin.close()
         if controller.process.stdout:
             controller.process.stdout.close()
-        controller.process.wait()
+        # controller.process.wait()
 
-    data = {'angles': controller.angles, 'peaks': controller.peaks, 'feedback': controller.feedback, 'times': controller.times, 'exercise_names': controller.exercise_name_list, 'all_hr': controller.all_heart_rates, 'heart_rates': controller.heart_rates, 'hrr': controller.hrr, 'actions': controller.actions, 'context': controller.context, 'rewards': controller.rewards}
+    data = {'angles': controller.angles, 'peaks': controller.peaks, 'feedback': controller.feedback, 'times': controller.times, 'exercise_names': controller.exercise_name_list, 'all_hr': controller.all_heart_rates, 'heart_rates': controller.heart_rates, 'hrr': controller.hrr, 'actions': controller.actions, 'context': controller.contexts, 'rewards': controller.rewards}
     
     dbfile = open('/home/roshni/quori_files/quori_ros/src/quori_exercises/saved_data/{}'.format(data_filename), 'ab')
 

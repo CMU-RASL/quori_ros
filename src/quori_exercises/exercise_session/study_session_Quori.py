@@ -21,14 +21,14 @@ REST_TIME = 40
 EXERCISE_LIST = ['bicep_curls', 'bicep_curls', 'lateral_raises', 'lateral_raises']
 
 #Change at beginning of study
-PARTICIPANT_ID = '11'
+PARTICIPANT_ID = '0'
 RESTING_HR = 97
 AGE = 21
 
 
 #Change at beginning of each round
-ROBOT_STYLE = 3#1 is firm, 3 is encouraging
-ROUND_NUM = 2
+ROBOT_STYLE = 3 #1 is firm, 3 is encouraging
+ROUND_NUM = 0
 
 MAX_HR = 220-AGE
 

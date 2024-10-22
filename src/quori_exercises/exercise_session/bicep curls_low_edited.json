@@ -147,7 +147,7 @@
             "Focus on maintaining symmetry between both arms."
         ],
         "encouraging": [
-            "Great job on the right side, can you pay a little more attention to your right arm?",
+            "Great job on the left side, can you pay a little more attention to your right arm?",
             "You're doing great, can you focus a little more on your right side?"
         ],
         "very encouraging": [
@@ -593,8 +593,9 @@
             "Maintain proper form to prevent injury."
         ],
         "encouraging": [
-            "Keep smashing those bicep curls!",
-            "You've got this, keep up those bicep curls!"  
+            "Make sure you are keeping a good speed on your bicep curls",
+            "Keep doing those bicep curls",
+            "Keep up a nice pace on those bicep curls"
         ],
         "very encouraging": [
             "Fantastic job! You're crushing those bicep curls!",
@@ -615,7 +616,8 @@
         ],
         "firm": [
             "Make sure you are keeping a good speed on your bicep curls",
-            "Keep doing those bicep curls"
+            "Keep doing those bicep curls",
+            "Keep up a nice pace on those bicep curls"
         ],
         "neutral": [
             "Maintain good form and control throughout each repetition.",
@@ -626,7 +628,8 @@
         ],
         "encouraging": [
             "Keep smashing those bicep curls!",
-            "You've got this, keep up those bicep curls!"  
+            "You've got this, keep up those bicep curls!",
+            "You've got this!"  
         ],
         "very encouraging": [
             "Fantastic job! You're crushing those bicep curls!",

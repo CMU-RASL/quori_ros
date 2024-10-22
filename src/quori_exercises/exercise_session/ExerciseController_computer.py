@@ -36,7 +36,7 @@ class ExerciseController:
         self.update_robot_style(style)
         if style == 5: #adaptive
             self.adaptive = True
-            self.process = subprocess.Popen(['python3.9', 'src/quori_exercises/exercise_session/adaptive_controller.py'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
+            self.process = subprocess.Popen(['python3.9', '-u', 'src/quori_exercises/exercise_session/adaptive_controller.py'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
 
         else:
             self.adaptive = False
@@ -65,7 +65,7 @@ class ExerciseController:
         self.eval_case_log = []
         self.speed_case_log = []
         self.resampled_reps = []
-        self.context = []
+        self.contexts = []
         self.actions = []
         self.rewards = []
 
@@ -100,9 +100,6 @@ class ExerciseController:
         self.peaks.append([])
         self.feedback.append([])
         self.times.append([])
-        self.context.append([])
-        self.actions.append([])
-        self.rewards.append([])
         self.current_exercise = exercise_name
         self.exercise_name_list.append(exercise_name)
         self.eval_case_log.append([])
@@ -259,7 +256,7 @@ class ExerciseController:
             # print('Condition 1: Last Peak Time {}, Last Angle Time {}'.format(last_peak_time, last_angle_time))
 
             #Check if far enough away from previous peak
-            if len(self.peaks[-1]) == 0 or (last_peak_time + 1 < last_angle_time):
+            if len(self.peaks[-1]) == 0 or (last_peak_time + 0.75 < last_angle_time):
                 
                 #Interval to check for peaks
                 to_check_amount = 10
@@ -291,8 +288,8 @@ class ExerciseController:
                     peak_candidate_time = self.times[-1][peak_candidate] - self.times[-1][0]
 
                     #Make sure peak candidate is not too close to previous peak and that a max has been reached between previous peak and current candidate
-                    if len(self.peaks[-1]) == 0 or (last_peak_time + 1 < peak_candidate_time and np.max(self.angles[-1][self.peaks[-1][-1]:peak_candidate,:][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']]) > EXERCISE_INFO[self.current_exercise]['max_in_range']):
-                        
+                    if len(self.peaks[-1]) == 0 or (last_peak_time + 0.75 < peak_candidate_time and np.max(self.angles[-1][self.peaks[-1][-1]:peak_candidate,:][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']]) > EXERCISE_INFO[self.current_exercise]['max_in_range']):
+                        # print('Condition 3: Peak Candidate {}, Peak Candidate Time {}'.format(peak_candidate, peak_candidate_time))
                         if self.current_exercise == 'bicep_curls':
                             if np.min(self.angles[-1][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds']][peak_candidate,:]) > 100:
                                 peak_to_add = peak_candidate
@@ -317,7 +314,7 @@ class ExerciseController:
 
         else:
             #Check if no movement in the last few seconds
-            if last_angle_time > 2:
+            if last_angle_time > 10:
                 min_in_range = np.min(self.angles[-1][-30:,:][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds'][0]])
                 max_in_range = np.max(self.angles[-1][-30:,:][:,EXERCISE_INFO[self.current_exercise]['segmenting_joint_inds'][0]])
                 
@@ -327,7 +324,7 @@ class ExerciseController:
                     self.message(m, priority=1)
                 
                 #If peaks are too far apart, say something as a filler
-                elif (len(self.peaks[-1]) == 0 and last_angle_time > 2) or (last_angle_time - last_peak_time > 6):
+                elif (len(self.peaks[-1]) == 0 and last_angle_time > 10) or (last_angle_time - last_peak_time > 15):
                     #Get style specific message
                     _, m = self.get_message(['peaks far apart'])
                     self.message(m, priority=1)
@@ -388,7 +385,7 @@ class ExerciseController:
 
                 #Skip message
                 self.logger.info('Skipping {}'.format(m))
-                return
+                return False
                 
         self.logger.info('Robot says: {}'.format(m))
         length_estimate = np.round(self.slope*syllables.estimate(m) + self.intercept)
@@ -398,6 +395,8 @@ class ExerciseController:
 
         self.message_log.append(m)
         self.message_time_stamps.append(datetime.now(timezone('EST')) + timedelta(seconds=length_estimate) )
+
+        return True
 
     def get_bad_eval_cases(self, feedback):
         c = []
@@ -601,14 +600,14 @@ class ExerciseController:
         for ci in c:
 
             key1 = self.current_exercise.replace('_', ' ')
-            key2 = 'low'
-            # if self.hrr[-1][-1] < 0.2:
-            #     key2 = 'low'
-            # elif self.hrr[-1][-1] < 0.4:
-            #     key2 = 'moderate'
-            # else:
-            #     key3 = 'high'
-            # self.logger.info('Heart Rate is {}, HRR is {}, Fatigue is {}'.format(self.heart_rates[-1][-1], self.hrr[-1][-1], key2))
+            # key2 = 'low'
+            if self.hrr[-1][-1] < 0.2:
+                key2 = 'low'
+            elif self.hrr[-1][-1] < 0.4:
+                key2 = 'moderate'
+            else:
+                key3 = 'high'
+            self.logger.info('Heart Rate is {}, HRR is {}, Fatigue is {}'.format(self.heart_rates[-1][-1], self.hrr[-1][-1], key2))
 
             key3 = ci
             key4 = styles[self.robot_style]
@@ -750,7 +749,7 @@ class ExerciseController:
             else:
                 self.react_nonverbal('negative')
 
-    def react(self, feedback, exercise_name): 
+    def react_old(self, feedback, exercise_name): 
 
         eval_case = self.find_eval_case(feedback)
         self.eval_case_log[-1].append(eval_case)
@@ -758,34 +757,38 @@ class ExerciseController:
         speed_case = self.find_speed_case(feedback)
         self.speed_case_log[-1].append(speed_case)
         
-        if np.min(feedback[-1]['evaluation']) >= 0:
-            reward = 1
-        else:
-            reward = 0
+        # if np.min(feedback[-1]['evaluation']) >= 0:
+        #     reward = 1
+        # else:
+        #     reward = 0
 
-        #Get last heart rate
-        context = 0
+        # #Get last heart rate
+        # # context = 0
         # if self.hrr[-1][-1] < 0.2:
         #     context = 0
         # elif self.hrr[-1][-1] < 0.4:
         #     context = 1
         # else:
         #     context = 2
-        if self.adaptive:
+        # if self.adaptive:
+            
+        #     try:
+        #         self.process.stdin.write(f"{context},{reward}\n")
+        #         self.process.stdin.flush()
+        #     except BrokenPipeError:
+        #         print('Broken Pipe Error')
 
-            self.process.stdin.write(f"{context},{reward}\n")
-            self.process.stdin.flush()
 
-            result = self.process.stdout.readline().strip()
-            action_choice = int(result)
-            if action_choice == 0:
-                self.update_robot_style(1)
-            else:
-                self.update_robot_style(3)
+        #     result = self.process.stdout.readline().strip()
+        #     action_choice = int(result)
+        #     if action_choice == 0:
+        #         self.update_robot_style(1)
+        #     else:
+        #         self.update_robot_style(3)
         
-        self.context[-1].append(context)
-        self.actions[-1].append(self.robot_style)
-        print('Context', context, 'Reward', reward, 'Action', self.robot_style)
+        # self.context[-1].append(context)
+        # self.actions[-1].append(self.robot_style)
+        # print('Context', context, 'Reward', reward, 'Action', self.robot_style)
 
         #Get message for each case
         eval_chosen_case, eval_message = self.get_message(eval_case)
@@ -795,15 +798,118 @@ class ExerciseController:
         self.logger.info('Speed case {} with chosen {} and message - {}'.format(speed_case, speed_chosen_case, speed_message))
         
         #If both messages available, choose the eval message
+        returned = False
         if len(eval_message) > 0:
             chosen_case = eval_chosen_case
-            self.message(eval_message, priority=1)
+            returned = self.message(eval_message, priority=1)
         elif len(speed_message) > 0:
             chosen_case = speed_chosen_case
-            self.message(speed_message, priority=1)
+            returned = self.message(speed_message, priority=1)
+        
         
         #If feedback case, want to match the reaction, otherwise react based on cadence
         if speed_message == '' and eval_message == '':
             self.nonverbal_case(feedback, '')
         else:
             self.nonverbal_case(feedback, chosen_case)
+    
+    def react(self, feedback, exercise_name):
+        #We have feedback/evaluation from Rep i
+        if np.min(feedback[-1]['evaluation']) >= 0:
+            reward_i = 1
+        else:
+            reward_i = 0
+        
+        #Let's get context i
+        if self.hrr[-1][-1] < 0.2:
+            context_i = 0
+        elif self.hrr[-1][-1] < 0.4:
+            context_i = 1
+        else:
+            context_i = 2
+        
+        self.logger.info('Current Context {}'.format(context_i))
+
+        #Now let's decide which style to react to rep_i with given the context_i and reward_i
+        if self.adaptive:
+            try:
+                self.process.stdin.write(f"{context_i},{-1},{-1}\n")
+                self.process.stdin.flush()
+            except BrokenPipeError:
+                print('Broken Pipe Error')
+
+            result = self.process.stdout.readline().strip()
+            
+            #Save the previous action choice and update the robot style temporarily
+            previous_action_choice = self.robot_style
+            action_choice = int(result)
+            self.update_robot_style(action_choice)
+        else:
+            action_choice = self.robot_style
+        
+        self.logger.info('Action Choice from the model', action_choice)
+
+        #Let's see if we are actually going to react though
+        eval_case = self.find_eval_case(feedback)
+        self.eval_case_log[-1].append(eval_case)
+
+        speed_case = self.find_speed_case(feedback)
+        self.speed_case_log[-1].append(speed_case)
+
+        #Get message for each case
+        eval_chosen_case, eval_message = self.get_message(eval_case)
+        speed_chosen_case, speed_message = self.get_message(speed_case)
+
+        self.logger.info('Evaluation case {} with chosen {} and message - {}'.format(eval_case, eval_chosen_case, eval_message))
+        self.logger.info('Speed case {} with chosen {} and message - {}'.format(speed_case, speed_chosen_case, speed_message))
+        
+        #If both messages available, choose the eval message
+        returned = False
+        if len(eval_message) > 0:
+            chosen_case = eval_chosen_case
+            returned = self.message(eval_message, priority=1)
+        elif len(speed_message) > 0:
+            chosen_case = speed_chosen_case
+            returned = self.message(speed_message, priority=1)
+        
+        #If feedback case, want to match the reaction, otherwise nonverbal react based on cadence
+        if speed_message == '' and eval_message == '':
+            self.nonverbal_case(feedback, '')
+        else:
+            self.nonverbal_case(feedback, chosen_case)
+
+        #If we reacted, then we leave the action choice as is
+        if returned:
+            pass
+            self.logger.info('Robot said the message')
+        elif self.adaptive:
+            #Go back to the previous action chocie, since we did not use the new one
+            self.logger.info('Robot did not say the message, going back to previous action choice of {}'.format(previous_action_choice))
+            self.update_robot_style(previous_action_choice)
+        
+        action_i = 0 if self.robot_style == 1 else 1 #0 for firm, 1 for encouraging
+        self.contexts.append(context_i)
+        self.actions.append(action_i)
+        self.rewards.append(reward_i)
+
+        #We need to train as well
+        if self.adaptive:
+            #We train on context_i-1, action_i-1, reward_i
+            
+            if len(self.contexts) == 1:
+                training_context = 0
+                training_action = 1
+            else:
+                training_context = self.contexts[-2]
+                training_action = self.actions[-2]
+            training_reward = self.rewards[-1]
+            self.logger.info('Training on Context {}, Action {}, Reward {}'.format(training_context, training_action, training_reward))
+            try:
+                self.process.stdin.write(f"{training_context},{training_action},{training_reward}\n")
+                self.process.stdin.flush()
+            except BrokenPipeError:
+                print('Broken Pipe Error')
+
+            result = self.process.stdout.readline().strip()
+            if result:
+                print('Trained model with Context {}, Action {}, Reward {}'.format(training_context, training_action, training_reward))

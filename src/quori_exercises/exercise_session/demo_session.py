@@ -42,7 +42,7 @@ log_filename = 'Participant_{}_Style_{}_Round_{}_{}.log'.format(PARTICIPANT_ID, 
 data_filename = 'Participant_{}_Style_{}_Round_{}_{}.pickle'.format(PARTICIPANT_ID, ROBOT_STYLE, ROUND_NUM, datetime.now().strftime("%Y-%m-%d--%H-%M-%S"))
 
 #Initialize evaluation object
-controller = ExerciseController(False, log_filename, ROBOT_STYLE, RESTING_HR, MAX_HR)
+controller = ExerciseController(False, log_filename, ROBOT_STYLE, RESTING_HR, MAX_HR, PARTICIPANT_ID)
 rospy.sleep(2)
 
 rospy.sleep(4)
@@ -127,8 +127,8 @@ for set_num, exercise_name in enumerate(EXERCISE_LIST):
     
     with keyboard.Listener(on_press=on_press) as listener:
         for _ in range(100):
-            set_pub.publish(set_performance)
-            print('Press enter to start next set, Publishing set performance {}'.format(set_performance))
+            # set_pub.publish(set_performance)
+            print('Press enter to start next set')
             time.sleep(1)
             if not listener.running:
                 break
@@ -159,4 +159,5 @@ controller.logger.handlers.clear()
 logging.shutdown()
 print('Done!')
 
-# plt.show()
+controller.plot_angles()
+plt.show()
